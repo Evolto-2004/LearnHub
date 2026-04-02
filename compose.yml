@@ -1,0 +1,51 @@
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "10"
+
+networks:
+  learnhub:
+    driver: bridge
+
+volumes:
+  mysql-data:
+
+services:
+  learnhub:
+    image: learnhub/light:local
+    build: .
+    restart: always
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=learnhub
+      - DB_USER=root
+      - DB_PASS=learnhub
+      - SA_TOKEN_IS_CONCURRENT=false
+      - SA_TOKEN_JWT_SECRET_KEY=${LEARNHUB_JWT_KEY:-learnhub}
+    ports:
+      - "${LEARNHUB_API_PORT:-9700}:9898"
+      - "${LEARNHUB_PC_PORT:-9800}:9800"
+      - "${LEARNHUB_H5_PORT:-9801}:9801"
+      - "${LEARNHUB_ADMIN_PORT:-9900}:9900"
+    networks:
+      - learnhub
+    depends_on:
+      - mysql
+    logging: *default-logging
+
+  mysql:
+    build: ./docker/mysql
+    restart: always
+    environment:
+      - MYSQL_DATABASE=learnhub
+      - MYSQL_ROOT_PASSWORD=learnhub
+      - TZ=UTC
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "${MYSQL_PORT:-23307}:3306"
+    networks:
+      - learnhub
+    logging: *default-logging

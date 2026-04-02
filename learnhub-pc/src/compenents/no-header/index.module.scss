@@ -1,0 +1,31 @@
+.app-header {
+  background: rgba(255, 255, 255, 0.86);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(12px);
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  padding: 0px 24px;
+}
+
+.main-header {
+  width: 1200px;
+  height: 60px;
+  line-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 auto;
+}
+
+.App-logo {
+  width: 124px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.top-main {
+  display: flex;
+  align-items: center;
+}

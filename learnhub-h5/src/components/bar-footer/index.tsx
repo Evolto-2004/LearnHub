@@ -1,0 +1,74 @@
+import React from "react";
+import { TabBar } from "antd-mobile";
+import styles from "./index.module.scss";
+import { useNavigate, useLocation } from "react-router-dom";
+
+export const TabBarFooter: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { pathname } = location;
+
+  const tabs = [
+    {
+      key: "/",
+      title: "Home",
+      icon: (active: boolean) =>
+        active ? (
+          <i
+            style={{ fontSize: 28, color: "#2563EB" }}
+            className="iconfont icon-icon-shouye"
+          ></i>
+        ) : (
+          <i
+            style={{ fontSize: 28, color: "#cccccc" }}
+            className="iconfont icon-icon-shouye"
+          ></i>
+        ),
+    },
+    {
+      key: "/study",
+      title: "Study",
+      icon: (active: boolean) =>
+        active ? (
+          <i
+            style={{ fontSize: 28, color: "#2563EB" }}
+            className="iconfont icon-icon-xuexi"
+          ></i>
+        ) : (
+          <i
+            style={{ fontSize: 28, color: "#cccccc" }}
+            className="iconfont icon-icon-xuexi"
+          ></i>
+        ),
+    },
+    {
+      key: "/member",
+      title: "Profile",
+      icon: (active: boolean) =>
+        active ? (
+          <i
+            style={{ fontSize: 28, color: "#2563EB" }}
+            className="iconfont icon-icon-wode"
+          ></i>
+        ) : (
+          <i
+            style={{ fontSize: 28, color: "#cccccc" }}
+            className="iconfont icon-icon-wode"
+          ></i>
+        ),
+    },
+  ];
+
+  return (
+    <div className={styles["footer"]}>
+      <TabBar
+        activeKey={pathname}
+        onChange={(value) => navigate(value, { replace: true })}
+      >
+        {tabs.map((item) => (
+          <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
+        ))}
+      </TabBar>
+    </div>
+  );
+};

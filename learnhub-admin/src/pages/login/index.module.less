@@ -1,0 +1,112 @@
+.login-content {
+  width: 100%;
+  float: left;
+  height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(96, 165, 250, 0.28), transparent 28%),
+    linear-gradient(180deg, #f7fbff 0%, #eaf2ff 100%);
+  position: relative;
+  .banner-box {
+    width: 100%;
+    float: left;
+    height: 640px;
+    position: relative;
+    .banner {
+      width: 100%;
+      height: 640px;
+      display: block;
+    }
+  }
+  .footer-box {
+    width: 880px;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -440px;
+    margin-top: 280px;
+  }
+  .login-box {
+    width: 880px;
+    height: 560px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0px 28px 60px rgba(15, 23, 42, 0.14);
+    border: 1px solid rgba(191, 219, 254, 0.8);
+    border-radius: 32px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -440px;
+    margin-top: -280px;
+    display: flex;
+    .left-box {
+      width: 440px;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 90px 10px 80px 30px;
+      display: flex;
+      align-items: center;
+      .icon {
+        width: 400px;
+        height: auto;
+      }
+    }
+    .right-box {
+      width: 440px;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 90px 30px 50px 30px;
+      display: flex;
+      flex-direction: column;
+
+      .eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        color: #2563EB;
+      }
+
+      .title {
+        width: auto;
+        height: auto;
+        font-size: 32px;
+        font-weight: 600;
+        color: #0F172A;
+        line-height: 40px;
+        box-sizing: border-box;
+        margin-top: 14px;
+      }
+
+      .desc {
+        font-size: 14px;
+        line-height: 24px;
+        color: #475569;
+        margin-top: 12px;
+      }
+
+      .captcha-box {
+        width: 125px;
+        height: 54px;
+        margin-left: 15px;
+        border-radius: 8px;
+        background-color: rgba(#2563EB, 0.1);
+        display: flex;
+
+        .catpcha-loading-box {
+          width: 125px;
+          height: 54px;
+          line-height: 54px;
+          text-align: center;
+        }
+
+        .captcha {
+          width: 125px;
+          height: 54px;
+          border: none;
+          cursor: pointer;
+          border-radius: 8px;
+        }
+      }
+    }
+  }
+}

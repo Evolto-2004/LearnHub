@@ -1,0 +1,32 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# LearnHub API Structure
+
+The API module follows a standard Spring Boot structure with controllers, services, and supporting components.
+
+## Controller Layout
+The API endpoints are divided into backend (admin) and frontend (student) controllers:
+
+### Backend Controllers
+- [Backend Controllers](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/controller/backend) - Admin management interfaces
+  - [AdminUserController](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/controller/backend/AdminUserController.java) - Administrator management
+  - [CourseController](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/controller/backend/CourseController.java) - Course management
+  - [DepartmentController](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/controller/backend/DepartmentController.java) - Department management
+  - [ResourceController](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/controller/backend/ResourceController.java) - Resource management
+  - [UserController](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/controller/backend/UserController.java) - User management
+
+### Frontend Controllers
+- [Frontend Controllers](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/controller/frontend) - Student-facing endpoints
+  - [LoginController](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/controller/frontend/LoginController.java) - Student login
+  - [CourseController](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/controller/frontend/CourseController.java) - Course access
+
+## API Application Components
+- [LearnHubApiApplication](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/LearnHubApiApplication.java) - Main application entry point
+- [Request DTOs](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/request) - Data transfer objects for API requests
+- [Response Format](mdc:learnhub-api/learnhub-common/src/main/java/xyz/learnhub/common/util/JsonResponse.java) - Standard JSON response format
+- [Event Handlers](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/event) - Event-driven components
+- [Scheduled Tasks](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/schedule) - Scheduled/recurring tasks
+- [Interceptors](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/interceptor) - HTTP request interceptors

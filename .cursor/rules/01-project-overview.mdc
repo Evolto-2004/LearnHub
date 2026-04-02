@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# LearnHub API Project Overview
+
+LearnHub is an online training solution developed by Baishu Technology. The API is built with Java + Spring Boot 3, using a modular approach.
+
+## Project Structure
+- [learnhub-api](mdc:learnhub-api) - Java backend API project
+- [learnhub-admin](mdc:learnhub-admin) - Admin frontend
+- [learnhub-pc](mdc:learnhub-pc) - PC web interface
+- [learnhub-h5](mdc:learnhub-h5) - Mobile web interface
+
+## API Key Modules
+- [learnhub-api/LearnHubApiApplication.java](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/LearnHubApiApplication.java) - Main application entry point
+- [learnhub-api](mdc:learnhub-api/learnhub-api) - API module containing controllers and API-specific logic
+- [learnhub-common](mdc:learnhub-api/learnhub-common) - Common utilities and shared code
+- [learnhub-resource](mdc:learnhub-api/learnhub-resource) - Resource management module
+- [learnhub-course](mdc:learnhub-api/learnhub-course) - Course-related functionality
+- [learnhub-system](mdc:learnhub-api/learnhub-system) - System management functionality
+
+## Backend vs Frontend Controllers
+- [Backend Controllers](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/controller/backend) - Admin-facing API endpoints
+- [Frontend Controllers](mdc:learnhub-api/learnhub-api/src/main/java/xyz/learnhub/api/controller/frontend) - Student-facing API endpoints
+
+## Development and Deployment
+- [pom.xml](mdc:learnhub-api/pom.xml) - Main Maven configuration file
+- [Dockerfile](mdc:learnhub-api/Dockerfile) - Docker build configuration
+- [compose.yml](mdc:compose.yml) - Docker Compose configuration

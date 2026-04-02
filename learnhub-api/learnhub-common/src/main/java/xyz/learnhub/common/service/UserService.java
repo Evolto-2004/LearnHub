@@ -1,0 +1,72 @@
+package xyz.learnhub.common.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import java.util.List;
+import java.util.Map;
+import xyz.learnhub.common.domain.User;
+import xyz.learnhub.common.exception.NotFoundException;
+import xyz.learnhub.common.exception.ServiceException;
+import xyz.learnhub.common.types.paginate.PaginationResult;
+import xyz.learnhub.common.types.paginate.UserPaginateFilter;
+
+/**
+ * @author tengteng
+ * @description 针对表【users】的数据库操作Service
+ * @createDate 2023-02-23 13:50:58
+ */
+public interface UserService extends IService<User> {
+    boolean emailIsExists(String email);
+
+    PaginationResult<User> paginate(int page, int size, UserPaginateFilter filter);
+
+    List<String> existsEmailsByEmails(List<String> emails);
+
+    void removeRelateDepartmentsByUserId(Integer userId);
+
+    User findOrFail(Integer id) throws NotFoundException;
+
+    User find(Integer id);
+
+    User find(String email);
+
+    User createWithDepIds(
+            String email,
+            String name,
+            Integer avatar,
+            String password,
+            String idCard,
+            Integer[] depIds);
+
+    User updateWithDepIds(
+            User user,
+            String email,
+            String name,
+            Integer avatar,
+            String password,
+            String idCard,
+            Integer[] depIds);
+
+    List<Integer> getDepIdsByUserId(Integer userId);
+
+    void passwordChange(User user, String oldPassword, String newPassword) throws ServiceException;
+
+    List<User> chunks(List<Integer> ids, List<String> fields);
+
+    List<User> chunks(List<Integer> ids);
+
+    Long total();
+
+    Long todayCount();
+
+    Long yesterdayCount();
+
+    Map<Integer, List<Integer>> getDepIdsGroup(List<Integer> userIds);
+
+    void changeAvatar(Integer userId, Integer avatar);
+
+    void updateName(Integer id, String cn);
+
+    void updateDepId(Integer id, Integer[] depIds);
+
+    void updateEmail(Integer id, String email);
+}

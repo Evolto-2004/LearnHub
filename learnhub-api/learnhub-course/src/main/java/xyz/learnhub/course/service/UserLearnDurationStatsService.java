@@ -1,0 +1,28 @@
+package xyz.learnhub.course.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import java.util.List;
+import xyz.learnhub.course.domain.UserLearnDurationStats;
+
+/**
+ * @author tengteng
+ * @description 针对表【user_learn_duration_stats】的数据库操作Service
+ * @createDate 2023-03-22 13:55:29
+ */
+public interface UserLearnDurationStatsService extends IService<UserLearnDurationStats> {
+    void storeOrUpdate(Integer userId, Long startTime, Long endTime);
+
+    Long todayTotal();
+
+    Long yesterdayTotal();
+
+    List<UserLearnDurationStats> top10();
+
+    Long todayUserDuration(Integer userId);
+
+    Long userDuration(Integer userId);
+
+    List<UserLearnDurationStats> dateBetween(Integer userId, String startAt, String endAt);
+
+    void remove(Integer userId);
+}

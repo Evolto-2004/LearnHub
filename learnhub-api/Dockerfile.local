@@ -1,0 +1,11 @@
+FROM eclipse-temurin:17-jre-jammy
+
+WORKDIR /app
+
+COPY ./learnhub-api/target/learnhub-api.jar /app/app.jar
+
+RUN chmod +x /app/app.jar
+
+EXPOSE 9898/tcp
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
