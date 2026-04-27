@@ -27,7 +27,6 @@ services:
     ports:
       - "${LEARNHUB_API_PORT:-9700}:9898"
       - "${LEARNHUB_PC_PORT:-9800}:9800"
-      - "${LEARNHUB_H5_PORT:-9801}:9801"
       - "${LEARNHUB_ADMIN_PORT:-9900}:9900"
     networks:
       - learnhub

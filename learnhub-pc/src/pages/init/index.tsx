@@ -6,7 +6,6 @@ import {
   saveConfigAction,
 } from "../../store/system/systemConfigSlice";
 import { loginAction } from "../../store/user/loginUserSlice";
-import { isMobile } from "../../utils/index";
 
 interface Props {
   loginData?: any;
@@ -24,7 +23,6 @@ export const InitPage = (props: Props) => {
     if (props.configData) {
       let config: SystemConfigStoreInterface = {
         //System Configuration
-        systemH5Url: props.configData["system-h5-url"],
         systemLogo: props.configData["system-logo"],
         systemName: props.configData["system-name"],
         systemPcUrl: props.configData["system-pc-url"],
@@ -48,10 +46,6 @@ export const InitPage = (props: Props) => {
           props.configData["player-bullet-secret-opacity"],
       };
       dispatch(saveConfigAction(config));
-      if (isMobile() && props.configData["system-h5-url"] !== "") {
-        let url = props.configData["system-h5-url"];
-        window.location.href = url;
-      }
     }
     setInit(true);
   }, [props]);

@@ -63,7 +63,6 @@ const LoginPage = () => {
       systemName: res.data["system.name"],
       systemLogo: res.data["system.logo"],
       systemPcUrl: res.data["system.pc_url"],
-      systemH5Url: res.data["system.h5_url"],
       resourceUrl: res.data["resource_url"],
       memberDefaultAvatar: res.data["member.default_avatar"],
       courseDefaultThumbs: res.data["default.course_thumbs"],

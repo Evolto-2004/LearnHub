@@ -5,13 +5,6 @@
 /learnhub-pc/.env.production/
 /learnhub-pc/build/
 
-/learnhub-h5/node_modules/
-/learnhub-h5/dist/
-/learnhub-h5/.env.local/
-/learnhub-h5/.env.development/
-/learnhub-h5/.env.production/
-/learnhub-h5/build/
-
 /learnhub-admin/node_modules/
 /learnhub-admin/dist/
 /learnhub-admin/.env.local/

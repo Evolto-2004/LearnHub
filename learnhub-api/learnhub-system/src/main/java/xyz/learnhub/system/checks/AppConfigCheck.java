@@ -52,16 +52,6 @@ public class AppConfigCheck implements CommandLineRunner {
                                 },
                                 new AppConfig() {
                                     {
-                                        setName("H5端口访问地址");
-                                        setSort(50);
-                                        setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_INPUT);
-                                        setKeyName(ConfigConstant.SYSTEM_H5_URL);
-                                        setKeyValue("");
-                                        setHelp("请输入H5端访问地址");
-                                    }
-                                },
-                                new AppConfig() {
-                                    {
                                         setName("网站页脚");
                                         setSort(60);
                                         setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_INPUT);

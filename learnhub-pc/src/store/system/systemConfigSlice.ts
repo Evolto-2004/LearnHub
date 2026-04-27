@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 
 type SystemConfigStoreInterface = {
   systemPcUrl: string;
-  systemH5Url: string;
   systemLogo: string;
   systemName: string;
   pcIndexFooterMsg: string;
@@ -17,7 +16,6 @@ type SystemConfigStoreInterface = {
 
 let defaultValue: SystemConfigStoreInterface = {
   systemPcUrl: "",
-  systemH5Url: "",
   systemLogo: "",
   systemName: "",
   pcIndexFooterMsg: "",

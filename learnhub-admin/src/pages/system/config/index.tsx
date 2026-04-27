@@ -65,10 +65,6 @@ const SystemConfigPage = () => {
           form.setFieldsValue({
             "system.pc_url": configData[i].key_value,
           });
-        } else if (configData[i].key_name === "system.h5_url") {
-          form.setFieldsValue({
-            "system.h5_url": configData[i].key_value,
-          });
         } else if (configData[i].key_name === "player.poster") {
           if (configData[i].key_value !== "") {
             setThumb(res.data.resource_url[Number(configData[i].key_value)]);
@@ -232,7 +228,6 @@ const SystemConfigPage = () => {
         systemName: res.data["system.name"],
         systemLogo: res.data["system.logo"],
         systemPcUrl: res.data["system.pc_url"],
-        systemH5Url: res.data["system.h5_url"],
         memberDefaultAvatar: res.data["member.default_avatar"],
         courseDefaultThumbs: res.data["default.course_thumbs"],
         departments: res.data["departments"],
@@ -313,13 +308,6 @@ const SystemConfigPage = () => {
             name="system.pc_url"
           >
             <Input style={{ width: 274 }} placeholder="Enter the PC portal URL" />
-          </Form.Item>
-          <Form.Item
-            style={{ marginBottom: 30 }}
-            label="H5 Portal URL"
-            name="system.h5_url"
-          >
-            <Input style={{ width: 274 }} placeholder="Enter the H5 portal URL" />
           </Form.Item>
           <Form.Item
             style={{ marginBottom: 30 }}

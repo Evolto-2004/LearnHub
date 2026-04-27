@@ -28,7 +28,6 @@ public class SystemController {
         data.put("system-name", configs.get(ConfigConstant.SYSTEM_NAME));
         data.put("system-logo", configs.get(ConfigConstant.SYSTEM_LOGO));
         data.put("system-pc-url", configs.get(ConfigConstant.SYSTEM_PC_URL));
-        data.put("system-h5-url", configs.get(ConfigConstant.SYSTEM_H5_URL));
         data.put("system-pc-index-footer-msg", configs.get("system.pc_index_footer_msg"));
 
         data.put("player-poster", configs.get("player.poster"));

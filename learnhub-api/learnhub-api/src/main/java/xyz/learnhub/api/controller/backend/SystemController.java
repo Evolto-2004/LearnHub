@@ -41,7 +41,6 @@ public class SystemController {
         data.put(ConfigConstant.SYSTEM_NAME, configData.get(ConfigConstant.SYSTEM_NAME));
         data.put(ConfigConstant.SYSTEM_LOGO, configData.get(ConfigConstant.SYSTEM_LOGO));
         data.put(ConfigConstant.SYSTEM_PC_URL, configData.get(ConfigConstant.SYSTEM_PC_URL));
-        data.put(ConfigConstant.SYSTEM_H5_URL, configData.get(ConfigConstant.SYSTEM_H5_URL));
 
         Integer rid = -1;
         String avatar = configData.get(ConfigConstant.MEMBER_DEFAULT_AVATAR);

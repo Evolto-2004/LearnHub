@@ -19,13 +19,12 @@ const InitPage = (props: Props) => {
   }
 
   if (props.configData) {
-    let config: SystemConfigStoreInterface = {
-      systemName: props.configData["system.name"],
-      systemLogo: props.configData["system.logo"],
-      systemPcUrl: props.configData["system.pc_url"],
-      systemH5Url: props.configData["system.h5_url"],
-      resourceUrl: props.configData["resource_url"],
-      memberDefaultAvatar: props.configData["member.default_avatar"],
+      let config: SystemConfigStoreInterface = {
+        systemName: props.configData["system.name"],
+        systemLogo: props.configData["system.logo"],
+        systemPcUrl: props.configData["system.pc_url"],
+        resourceUrl: props.configData["resource_url"],
+        memberDefaultAvatar: props.configData["member.default_avatar"],
       courseDefaultThumbs: props.configData["default.course_thumbs"],
       departments: props.configData["departments"],
       resourceCategories: props.configData["resource_categories"],
