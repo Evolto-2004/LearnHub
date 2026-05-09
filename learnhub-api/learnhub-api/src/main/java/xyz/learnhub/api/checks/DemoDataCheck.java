@@ -385,7 +385,10 @@ public class DemoDataCheck implements CommandLineRunner {
                         "Programming basics and lab practice for undergraduate courses.",
                         1,
                         new Integer[] {
-                            departments.computerScience(), departments.softwareEngineering()
+                            departments.computerScience(),
+                            departments.softwareEngineering(),
+                            departments.digitalMedia(),
+                            departments.generalEducation()
                         },
                         List.of(
                                 new LessonSeed(
@@ -432,6 +435,7 @@ public class DemoDataCheck implements CommandLineRunner {
                         "Library research, citations, and short paper structure.",
                         0,
                         new Integer[] {
+                            departments.computerScience(),
                             departments.business(),
                             departments.digitalMedia(),
                             departments.generalEducation()
@@ -476,6 +480,7 @@ public class DemoDataCheck implements CommandLineRunner {
                         new Integer[] {
                             departments.computerScience(),
                             departments.softwareEngineering(),
+                            departments.business(),
                             departments.digitalMedia()
                         },
                         List.of(
