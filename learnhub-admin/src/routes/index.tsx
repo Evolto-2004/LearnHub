@@ -1,8 +1,6 @@
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
-import { login, system } from "../api";
 
-import { getToken } from "../utils";
 import KeepAlive from "../compenents/keep-alive";
 // 页面加载
 import InitPage from "../pages/init";
@@ -47,35 +45,10 @@ import PrivateRoute from "../compenents/private-route";
 
 // const LoginPage = lazy(() => import("../pages/login"));
 
-let RootPage: any = null;
-if (getToken()) {
-  RootPage = lazy(async () => {
-    return new Promise<any>(async (resolve) => {
-      try {
-        let configRes: any = await system.getSystemConfig();
-        let userRes: any = await login.getUser();
-
-        resolve({
-          default: (
-            <InitPage configData={configRes.data} loginData={userRes.data} />
-          ),
-        });
-      } catch (e) {
-        console.error("System initialization failed", e);
-        resolve({
-          default: <ErrorPage />,
-        });
-      }
-    });
-  });
-} else {
-  RootPage = <InitPage />;
-}
-
 const routes: RouteObject[] = [
   {
     path: "/",
-    element: RootPage,
+    element: <InitPage />,
     children: [
       {
         path: "/",

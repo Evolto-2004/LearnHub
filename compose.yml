@@ -23,6 +23,7 @@ services:
       - DB_NAME=learnhub
       - DB_USER=root
       - DB_PASS=learnhub
+      - LEARNHUB_DEMO_DATA_ENABLED=${LEARNHUB_DEMO_DATA_ENABLED:-true}
       - SA_TOKEN_IS_CONCURRENT=false
       - SA_TOKEN_JWT_SECRET_KEY=${LEARNHUB_JWT_KEY:-learnhub}
     ports:

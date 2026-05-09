@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { startTransition, useEffect, useState } from "react";
 import { Menu } from "antd";
 import { useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -143,7 +143,9 @@ export const LeftMenu: React.FC = () => {
   const [activeMenus, setActiveMenus] = useState<any>([]);
 
   const onClick = (e: any) => {
-    navigate(e.key);
+    startTransition(() => {
+      navigate(e.key);
+    });
   };
 
   useEffect(() => {
