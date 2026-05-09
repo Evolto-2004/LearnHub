@@ -12,7 +12,6 @@ type UserStoreInterface = {
   isLogin: boolean;
   permissions: string[];
   uploadStatus: boolean;
-  uploadCateIds: number[];
 };
 
 let defaultValue: UserStoreInterface = {
@@ -20,7 +19,6 @@ let defaultValue: UserStoreInterface = {
   isLogin: false,
   permissions: [],
   uploadStatus: false,
-  uploadCateIds: [],
 };
 
 const loginUserSlice = createSlice({
@@ -46,7 +44,6 @@ const loginUserSlice = createSlice({
         message.error("Please click the floating button in the bottom-right corner");
       }
       stage.value.uploadStatus = e.payload.uploadStatus;
-      stage.value.uploadCateIds = e.payload.uploadCateIds;
     },
   },
 });

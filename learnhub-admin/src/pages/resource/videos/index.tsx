@@ -11,11 +11,10 @@ import {
 } from "antd";
 import type { MenuProps } from "antd";
 import { resource } from "../../../api";
-import { useLocation } from "react-router-dom";
 import { DownOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { dateFormat, translateAdminIdentity } from "../../../utils/index";
-import { TreeCategory, DurationText } from "../../../compenents";
+import { DurationText } from "../../../compenents";
 import { UploadVideoButton } from "../../../compenents/upload-video-button";
 import { VideoPlayDialog } from "./compenents/video-play-dialog";
 import { VideosUpdateDialog } from "./compenents/update-dialog";
@@ -52,7 +51,6 @@ type AdminUsersModel = {
 };
 
 const ResourceVideosPage = () => {
-  const result = new URLSearchParams(useLocation().search);
   const [videoList, setVideoList] = useState<DataType[]>([]);
   const [videosExtra, setVideoExtra] = useState<VideosExtraModel>({});
   const [adminUsers, setAdminUsers] = useState<AdminUsersModel>({});
@@ -62,27 +60,13 @@ const ResourceVideosPage = () => {
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [category_ids, setCategoryIds] = useState<number[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any>([]);
-  const [selLabel, setLabel] = useState<string>(
-    result.get("label") ? String(result.get("label")) : "All Videos"
-  );
-  const [cateId, setCateId] = useState(Number(result.get("cid")));
   const [updateVisible, setUpdateVisible] = useState(false);
   const [playVisible, setPlayeVisible] = useState(false);
   const [multiConfig, setMultiConfig] = useState(false);
   const [updateId, setUpdateId] = useState(0);
   const [playUrl, setPlayUrl] = useState("");
   const [title, setTitle] = useState("");
-
-  useEffect(() => {
-    setCateId(Number(result.get("cid")));
-    if (Number(result.get("cid"))) {
-      let arr = [];
-      arr.push(Number(result.get("cid")));
-      setCategoryIds(arr);
-    }
-  }, [result.get("cid")]);
 
   const columns: ColumnsType<DataType> = [
     {
@@ -240,9 +224,8 @@ const ResourceVideosPage = () => {
   // 获取Video列表
   const getVideoList = () => {
     setLoading(true);
-    let categoryIds = category_ids.join(",");
     resource
-      .resourceList(page, size, "", "", title, "VIDEO", categoryIds)
+      .resourceList(page, size, "", "", title, "VIDEO")
       .then((res: any) => {
         setTotal(res.data.result.total);
         setVideoList(res.data.result.data);
@@ -269,7 +252,7 @@ const ResourceVideosPage = () => {
   // 加载Video列表
   useEffect(() => {
     getVideoList();
-  }, [category_ids, refresh, page, size]);
+  }, [refresh, page, size]);
 
   const paginationProps = {
     current: page, //当前页码
@@ -294,30 +277,13 @@ const ResourceVideosPage = () => {
   return (
     <>
       <div className="tree-main-body">
-        <div className="left-box">
-          <TreeCategory
-            selected={category_ids}
-            type="no-cate"
-            text={"Video"}
-            onUpdate={(keys: any, title: any) => {
-              setPage(1);
-              setCategoryIds(keys);
-              if (typeof title === "string") {
-                setLabel(title);
-              } else {
-                setLabel(title.props.children[0]);
-              }
-            }}
-          />
-        </div>
-        <div className="right-box">
+        <div className="right-box" style={{ width: "100%" }}>
           <div className="d-flex learnhub-main-title float-left mb-24">
-            Video | {selLabel}
+            Video
           </div>
           <div className="float-left  j-b-flex  mb-24">
             <div>
               <UploadVideoButton
-                categoryIds={category_ids}
                 onUpdate={() => {
                   resetVideoList();
                 }}

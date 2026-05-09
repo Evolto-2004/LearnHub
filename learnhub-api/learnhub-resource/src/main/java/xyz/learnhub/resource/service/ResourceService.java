@@ -16,7 +16,6 @@ public interface ResourceService extends IService<Resource> {
 
     Resource create(
             Integer adminId,
-            String categoryIds,
             String type,
             String filename,
             String ext,
@@ -29,7 +28,6 @@ public interface ResourceService extends IService<Resource> {
     void update(
             Resource resource,
             Integer adminId,
-            String categoryIds,
             String type,
             String filename,
             String ext,
@@ -49,9 +47,7 @@ public interface ResourceService extends IService<Resource> {
 
     Integer duration(Integer id);
 
-    void updateNameAndCategoryId(Integer id, String name, Integer categoryId);
-
-    List<Integer> categoryIds(Integer resourceId);
+    void updateName(Integer id, String name);
 
     Integer total(List<String> types);
 

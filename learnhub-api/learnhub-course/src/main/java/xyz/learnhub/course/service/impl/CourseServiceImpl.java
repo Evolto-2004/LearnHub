@@ -2,9 +2,12 @@ package xyz.learnhub.course.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,10 +16,8 @@ import xyz.learnhub.common.types.paginate.CoursePaginateFiler;
 import xyz.learnhub.common.types.paginate.PaginationResult;
 import xyz.learnhub.common.util.StringUtil;
 import xyz.learnhub.course.domain.Course;
-import xyz.learnhub.course.domain.CourseCategory;
 import xyz.learnhub.course.domain.CourseDepartmentUser;
 import xyz.learnhub.course.mapper.CourseMapper;
-import xyz.learnhub.course.service.CourseCategoryService;
 import xyz.learnhub.course.service.CourseDepartmentUserService;
 import xyz.learnhub.course.service.CourseService;
 
@@ -29,8 +30,6 @@ import xyz.learnhub.course.service.CourseService;
 public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> implements CourseService {
 
     @Autowired private CourseDepartmentUserService courseDepartmentUserService;
-
-    @Autowired private CourseCategoryService courseCategoryService;
 
     @Override
     public PaginationResult<Course> paginate(int page, int size, CoursePaginateFiler filter) {
@@ -46,16 +45,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
     @Override
     @Transactional
-    public Course createWithCategoryIdsAndDepIds(
+    public Course createWithDepIds(
             String title,
             Integer thumb,
             String shortDesc,
             Integer isRequired,
             Integer isShow,
-            Integer[] categoryIds,
             Integer[] depIds,
             Integer adminId) {
-        // 创建课程
         Course course = new Course();
         course.setTitle(title);
         course.setThumb(thumb);
@@ -67,9 +64,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         course.setUpdatedAt(new Date());
         course.setAdminId(adminId);
         save(course);
-        // 关联分类
-        relateCategories(course, categoryIds);
-        // 关联部门
+
         relateDepartments(course, depIds);
 
         return course;
@@ -81,13 +76,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
             return;
         }
         List<CourseDepartmentUser> courseDepartmentUsers = new ArrayList<>();
-        for (int i = 0; i < depIds.length; i++) {
-            Integer tmpDepId = depIds[i];
+        for (Integer depId : depIds) {
             courseDepartmentUsers.add(
                     new CourseDepartmentUser() {
                         {
                             setCourseId(course.getId());
-                            setRangeId(tmpDepId);
+                            setRangeId(depId);
                         }
                     });
         }
@@ -101,33 +95,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     }
 
     @Override
-    public void relateCategories(Course course, Integer[] categoryIds) {
-        if (categoryIds == null || categoryIds.length == 0) {
-            return;
-        }
-        List<CourseCategory> courseCategories = new ArrayList<>();
-        for (int i = 0; i < categoryIds.length; i++) {
-            Integer tmpCategoryId = categoryIds[i];
-            courseCategories.add(
-                    new CourseCategory() {
-                        {
-                            setCategoryId(tmpCategoryId);
-                            setCourseId(course.getId());
-                        }
-                    });
-        }
-        courseCategoryService.saveBatch(courseCategories);
-    }
-
-    @Override
-    public void resetRelateCategories(Course course, Integer[] categoryIds) {
-        courseCategoryService.removeByCourseId(course.getId());
-        relateCategories(course, categoryIds);
-    }
-
-    @Override
     @Transactional
-    public void updateWithCategoryIdsAndDepIds(
+    public void updateWithDepIds(
             Course course,
             String title,
             Integer thumb,
@@ -135,7 +104,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
             Integer isRequired,
             Integer isShow,
             String sortAt,
-            Integer[] categoryIds,
             Integer[] depIds) {
         Course newCourse = new Course();
         newCourse.setId(course.getId());
@@ -151,8 +119,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
         updateById(newCourse);
 
-        resetRelateCategories(newCourse, categoryIds);
-        resetRelateDepartments(newCourse, depIds);
+        resetRelateDepartments(course, depIds);
     }
 
     @Override
@@ -170,21 +137,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     }
 
     @Override
-    public List<Integer> getCategoryIdsByCourseId(Integer courseId) {
-        return courseCategoryService.getCategoryIdsByCourseId(courseId);
-    }
-
-    @Override
     public void updateClassHour(Integer courseId, Integer classHour) {
         Course course = new Course();
         course.setId(courseId);
         course.setClassHour(classHour);
         updateById(course);
-    }
-
-    @Override
-    public void removeCategoryIdRelate(Integer categoryId) {
-        courseCategoryService.removeByCategoryId(categoryId);
     }
 
     @Override
@@ -202,40 +159,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
     @Override
     public List<Course> getOpenCoursesAndShow(Integer limit) {
-        return getBaseMapper().openCoursesAndShow(limit, new ArrayList<>());
-    }
-
-    @Override
-    public List<Course> getOpenCoursesAndShow(Integer limit, List<Integer> categoryIds) {
-        return getBaseMapper().openCoursesAndShow(limit, categoryIds);
-    }
-
-    @SneakyThrows
-    @Override
-    public List<Course> getDepCoursesAndShow(List<Integer> depIds, List<Integer> categoryIds) {
-        if (StringUtil.isEmpty(depIds)) {
-            return new ArrayList<>();
-        }
-        // 获取部门课程ID
-        List<Integer> courseIds = courseDepartmentUserService.getCourseIdsByDepIds(depIds);
-        if (StringUtil.isEmpty(courseIds)) {
-            return new ArrayList<>();
-        }
-
-        if (StringUtil.isNotEmpty(categoryIds)) {
-            // 获取分类课程ID
-            List<Integer> catCourseIds =
-                    courseCategoryService.getCourseIdsByCategoryIds(categoryIds);
-            if (StringUtil.isEmpty(catCourseIds)) {
-                return new ArrayList<>();
-            }
-            // 求课程ID交集
-            courseIds = courseIds.stream().filter(catCourseIds::contains).toList();
-            if (StringUtil.isEmpty(courseIds)) {
-                return new ArrayList<>();
-            }
-        }
-        return list(query().getWrapper().in("id", courseIds).eq("is_show", 1));
+        return getBaseMapper().openCoursesAndShow(limit);
     }
 
     @Override
@@ -243,31 +167,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         if (StringUtil.isEmpty(depIds)) {
             return new ArrayList<>();
         }
-        // 获取部门课程ID
         List<Integer> courseIds = courseDepartmentUserService.getCourseIdsByDepIds(depIds);
         if (StringUtil.isEmpty(courseIds)) {
             return new ArrayList<>();
         }
         return list(query().getWrapper().in("id", courseIds).eq("is_show", 1));
-    }
-
-    @Override
-    public Map<Integer, List<Integer>> getCategoryIdsGroup(List<Integer> courseIds) {
-        if (courseIds == null || courseIds.size() == 0) {
-            return null;
-        }
-        Map<Integer, List<CourseCategory>> data =
-                courseCategoryService
-                        .list(courseCategoryService.query().getWrapper().in("course_id", courseIds))
-                        .stream()
-                        .collect(Collectors.groupingBy(CourseCategory::getCourseId));
-        Map<Integer, List<Integer>> result = new HashMap<>();
-        data.forEach(
-                (courseId, records) -> {
-                    result.put(
-                            courseId, records.stream().map(CourseCategory::getCategoryId).toList());
-                });
-        return result;
     }
 
     @Override

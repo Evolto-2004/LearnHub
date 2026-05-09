@@ -111,19 +111,6 @@
       animation: scaleTransX 0.3s;
     }
   }
-  .dropButton {
-    height: 40px;
-    font-size: 14px;
-    font-weight: 400;
-    color: rgba(0, 0, 0, 0.45);
-    line-height: 40px;
-    display: flex;
-    align-items: center;
-    position: absolute;
-    right: 0;
-    top: 0;
-    cursor: pointer;
-  }
 }
 
 @keyframes scaleTransX {

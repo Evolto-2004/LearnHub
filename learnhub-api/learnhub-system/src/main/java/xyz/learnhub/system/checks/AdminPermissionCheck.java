@@ -20,29 +20,6 @@ public class AdminPermissionCheck implements CommandLineRunner {
                             BPermissionConstant.TYPE_ACTION,
                             new HashMap<>() {
                                 {
-                                    // 分类管理
-                                    put(
-                                            "分类管理",
-                                            new AdminPermission[] {
-                                                new AdminPermission() {
-                                                    {
-                                                        setSort(0);
-                                                        setName("列表");
-                                                        setSlug(
-                                                                BPermissionConstant
-                                                                        .RESOURCE_CATEGORY_MENU);
-                                                    }
-                                                },
-                                                new AdminPermission() {
-                                                    {
-                                                        setSort(0);
-                                                        setName("新增|编辑|删除");
-                                                        setSlug(
-                                                                BPermissionConstant
-                                                                        .RESOURCE_CATEGORY);
-                                                    }
-                                                },
-                                            });
                                     // 资源管理
                                     put(
                                             "资源管理",

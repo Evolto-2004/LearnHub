@@ -41,17 +41,6 @@
                 </otherwise>
             </choose>
         </if>
-        <if test="categoryIds != null and !categoryIds.isEmpty()">
-            <choose>
-                <when test="categoryIds.get(0) == 0">
-                    LEFT JOIN `resource_course_category` ON `resource_course_category`.`course_id` = `courses`.`id`
-                </when>
-                <otherwise>
-                    INNER JOIN `resource_course_category` ON `resource_course_category`.`course_id` = `courses`.`id`
-                </otherwise>
-            </choose>
-        </if>
-
         <where>
             <if test="depIds != null and !depIds.isEmpty()">
                 <choose>
@@ -64,18 +53,6 @@
                     </otherwise>
                 </choose>
             </if>
-            <if test="categoryIds != null and !categoryIds.isEmpty()">
-                <choose>
-                    <when test="categoryIds.get(0) == 0">
-                        AND `resource_course_category`.`course_id` IS NULL
-                    </when>
-                    <otherwise>
-                        AND `resource_course_category`.`category_id` IN (<foreach collection="categoryIds" item="tmpId" separator=",">
-                        #{tmpId}</foreach>)
-                    </otherwise>
-                </choose>
-            </if>
-
             <if test="title != null and title != ''">
                 AND `courses`.`title` LIKE concat('%',#{title},'%')
             </if>
@@ -136,17 +113,6 @@
                 </otherwise>
             </choose>
         </if>
-        <if test="categoryIds != null and !categoryIds.isEmpty()">
-            <choose>
-                <when test="categoryIds.get(0) == 0">
-                    LEFT JOIN `resource_course_category` ON `resource_course_category`.`course_id` = `courses`.`id`
-                </when>
-                <otherwise>
-                    INNER JOIN `resource_course_category` ON `resource_course_category`.`course_id` = `courses`.`id`
-                </otherwise>
-            </choose>
-        </if>
-
         <where>
             <if test="depIds != null and !depIds.isEmpty()">
                 <choose>
@@ -159,19 +125,6 @@
                     </otherwise>
                 </choose>
             </if>
-            <if test="categoryIds != null and !categoryIds.isEmpty()">
-                <choose>
-                    <when test="categoryIds.get(0) == 0">
-                        AND `resource_course_category`.`course_id` IS NULL
-                    </when>
-                    <otherwise>
-                        AND `resource_course_category`.`category_id` IN (<foreach collection="categoryIds" item="tmpId"
-                                                                                  separator=",">
-                        #{tmpId}</foreach>)
-                    </otherwise>
-                </choose>
-            </if>
-
             <if test="title != null and title != ''">
                 AND `courses`.`title` LIKE concat('%',#{title},'%')
             </if>
@@ -188,16 +141,8 @@
         SELECT `courses`.*
         FROM `courses`
         LEFT JOIN `course_department_user` ON `course_department_user`.`course_id` = `courses`.`id`
-        <if test="categoryIds != null and !categoryIds.isEmpty()">
-            INNER JOIN `resource_course_category` ON `resource_course_category`.`course_id` = `courses`.`id`
-        </if>
         WHERE `course_department_user`.`course_id` IS NULL
         AND `courses`.`is_show` = 1
-        <if test="categoryIds != null and !categoryIds.isEmpty()">
-            AND `resource_course_category`.`category_id` IN (<foreach collection="categoryIds" item="tmpId"
-                                                                      separator=",">
-            #{tmpId}</foreach>)
-        </if>
         LIMIT #{limit}
     </select>
 </mapper>

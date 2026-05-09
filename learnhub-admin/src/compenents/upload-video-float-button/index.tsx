@@ -32,9 +32,6 @@ export const UploadVideoFloatButton = () => {
   const uploadStatus = useSelector(
     (state: any) => state.loginUser.value.uploadStatus
   );
-  const categoryIds = useSelector(
-    (state: any) => state.loginUser.value.uploadCateIds
-  );
 
   const getMinioUploadId = async () => {
     let resp: any = await minioUploadId("mp4");
@@ -100,7 +97,6 @@ export const UploadVideoFloatButton = () => {
           minioMergeVideo(
             data["filename"],
             data["upload_id"],
-            categoryIds.join(","),
             item.file.name,
             "mp4",
             item.file.size,
@@ -149,7 +145,6 @@ export const UploadVideoFloatButton = () => {
     dispatch(
       uploadAction({
         uploadStatus: false,
-        uploadCateIds: [],
       })
     );
   };

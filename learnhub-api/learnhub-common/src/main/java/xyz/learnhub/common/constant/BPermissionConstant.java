@@ -22,8 +22,6 @@ public class BPermissionConstant {
     public static final String COURSE_CUD = "course-cud";
     public static final String COURSE_USER = "course-user";
     public static final String COURSE_USER_DESTROY = "course-user-destroy";
-    public static final String RESOURCE_CATEGORY = "resource-category";
-    public static final String RESOURCE_CATEGORY_MENU = "resource-category-menu";
     public static final String RESOURCE_MENU = "resource-menu";
     public static final String SYSTEM_CONFIG = "system-config";
     public static final String UPLOAD = "upload";

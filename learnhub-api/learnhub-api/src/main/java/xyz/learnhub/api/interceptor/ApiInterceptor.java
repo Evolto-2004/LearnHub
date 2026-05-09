@@ -21,7 +21,7 @@ public class ApiInterceptor implements HandlerInterceptor {
 
     @Autowired private RateLimiterService rateLimiterService;
 
-    @Autowired private LearnHubConfig playEduConfig;
+    @Autowired private LearnHubConfig learnHubConfig;
 
     @Override
     public boolean preHandle(
@@ -40,8 +40,8 @@ public class ApiInterceptor implements HandlerInterceptor {
 
         // 限流判断
         String reqCountKey = "api-limiter:" + IpUtil.getIpAddress();
-        Long reqCount = rateLimiterService.current(reqCountKey, playEduConfig.getLimiterDuration());
-        long limitCount = playEduConfig.getLimiterLimit();
+        Long reqCount = rateLimiterService.current(reqCountKey, learnHubConfig.getLimiterDuration());
+        long limitCount = learnHubConfig.getLimiterLimit();
         long limitRemaining = limitCount - reqCount;
         response.setHeader("X-RateLimit-Limit", String.valueOf(limitCount));
         response.setHeader("X-RateLimit-Remaining", String.valueOf(limitRemaining));

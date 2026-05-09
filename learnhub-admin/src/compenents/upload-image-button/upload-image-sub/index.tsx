@@ -6,7 +6,6 @@ import { getToken, checkUrl } from "../../../utils";
 import { InboxOutlined } from "@ant-design/icons";
 
 interface PropsInterface {
-  categoryIds: number[];
   onUpdate: () => void;
 }
 
@@ -16,10 +15,7 @@ export const UploadImageSub = (props: PropsInterface) => {
   const uploadProps = {
     name: "file",
     multiple: true,
-    action:
-      checkUrl(config.app_url) +
-      "backend/v1/upload/minio?category_ids=" +
-      props.categoryIds.join(","),
+    action: checkUrl(config.app_url) + "backend/v1/upload/minio",
     headers: {
       authorization: "Bearer " + getToken(),
     },

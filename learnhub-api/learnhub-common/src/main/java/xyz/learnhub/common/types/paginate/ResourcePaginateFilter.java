@@ -1,6 +1,5 @@
 package xyz.learnhub.common.types.paginate;
 
-import java.util.List;
 import lombok.Data;
 
 /**
@@ -19,8 +18,6 @@ public class ResourcePaginateFilter {
     private String sortField;
 
     private String sortAlgo;
-
-    private List<Integer> categoryIds;
 
     private String type;
 

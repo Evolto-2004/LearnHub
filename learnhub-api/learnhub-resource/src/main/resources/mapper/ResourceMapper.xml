@@ -26,29 +26,8 @@
         is_hidden
     </sql>
 
-    <select id="paginate" resultType="xyz.learnhub.resource.domain.Resource">
-        SELECT `resource`.*
-        FROM `resource`
-        <choose>
-            <when test="categoryIds != null and !categoryIds.isEmpty()">
-                <choose>
-                    <when test="categoryIds.get(0) == 0">
-                        LEFT JOIN `resource_category` ON `resource_category`.`rid` = `resource`.`id`
-                        WHERE `resource`.`is_hidden` = 0
-                        AND `resource_category`.`cid` IS NULL
-                    </when>
-                    <otherwise>
-                        INNER JOIN `resource_category` ON `resource_category`.`rid` = `resource`.`id`
-                        WHERE `resource`.`is_hidden` = 0
-                        AND `resource_category`.`cid` IN (<foreach collection="categoryIds" item="tmpId" separator=",">
-                        #{tmpId}</foreach>)
-                    </otherwise>
-                </choose>
-            </when>
-            <otherwise>
-                WHERE `resource`.`is_hidden` = 0
-            </otherwise>
-        </choose>
+    <sql id="Resource_Filter">
+        WHERE `resource`.`is_hidden` = 0
         <if test="name != null and name != ''">
             AND `resource`.`name` LIKE concat('%',#{name},'%')
         </if>
@@ -67,6 +46,12 @@
         <if test="adminId != null and adminId != 0">
             AND `resource`.`admin_id` = #{adminId}
         </if>
+    </sql>
+
+    <select id="paginate" resultType="xyz.learnhub.resource.domain.Resource">
+        SELECT `resource`.*
+        FROM `resource`
+        <include refid="Resource_Filter"/>
         <if test="sortAlgo == 'asc'">
             <choose>
                 <when test="sortField == 'size'">
@@ -99,87 +84,13 @@
     <select id="paginateCount" resultType="java.lang.Long">
         SELECT count(1)
         FROM `resource`
-        <choose>
-            <when test="categoryIds != null and !categoryIds.isEmpty()">
-                <choose>
-                    <when test="categoryIds.get(0) == 0">
-                        LEFT JOIN `resource_category` ON `resource_category`.`rid` = `resource`.`id`
-                        WHERE `resource`.`is_hidden` = 0
-                        AND `resource_category`.`cid` IS NULL
-                    </when>
-                    <otherwise>
-                        INNER JOIN `resource_category` ON `resource_category`.`rid` = `resource`.`id`
-                        WHERE `resource`.`is_hidden` = 0
-                        AND `resource_category`.`cid` IN (<foreach collection="categoryIds" item="tmpId" separator=",">
-                        #{tmpId}</foreach>)
-                    </otherwise>
-                </choose>
-            </when>
-            <otherwise>
-                WHERE `resource`.`is_hidden` = 0
-            </otherwise>
-        </choose>
-        <if test="name != null and name != ''">
-            AND `resource`.`name` LIKE concat('%',#{name},'%')
-        </if>
-        <if test="disk != null and disk != ''">
-            AND `resource`.`disk` = #{disk}
-        </if>
-        <if test="extension != null and extension != ''">
-            AND `resource`.`extension` = #{extension}
-        </if>
-        <if test="type != null and type != ''">
-            AND `resource`.`type` IN
-            <foreach item="item" collection="type.split(',')" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-        </if>
-        <if test="adminId != null and adminId != 0">
-            AND `resource`.`admin_id` = #{adminId}
-        </if>
+        <include refid="Resource_Filter"/>
     </select>
 
     <select id="paginateType" resultType="java.lang.String">
         SELECT DISTINCT ( `resource`.`type` )
         FROM `resource`
-        <choose>
-            <when test="categoryIds != null and !categoryIds.isEmpty()">
-                <choose>
-                    <when test="categoryIds.get(0) == 0">
-                        LEFT JOIN `resource_category` ON `resource_category`.`rid` = `resource`.`id`
-                        WHERE `resource`.`is_hidden` = 0
-                        AND `resource_category`.`cid` IS NULL
-                    </when>
-                    <otherwise>
-                        INNER JOIN `resource_category` ON `resource_category`.`rid` = `resource`.`id`
-                        WHERE `resource`.`is_hidden` = 0
-                        AND `resource_category`.`cid` IN (<foreach collection="categoryIds" item="tmpId" separator=",">
-                        #{tmpId}</foreach>)
-                    </otherwise>
-                </choose>
-            </when>
-            <otherwise>
-                WHERE `resource`.`is_hidden` = 0
-            </otherwise>
-        </choose>
-        <if test="name != null and name != ''">
-            AND `resource`.`name` LIKE concat('%',#{name},'%')
-        </if>
-        <if test="disk != null and disk != ''">
-            AND `resource`.`disk` = #{disk}
-        </if>
-        <if test="extension != null and extension != ''">
-            AND `resource`.`extension` = #{extension}
-        </if>
-        <if test="type != null and type != ''">
-            AND `resource`.`type` IN
-            <foreach item="item" collection="type.split(',')" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-        </if>
-        <if test="adminId != null and adminId != 0">
-            AND `resource`.`admin_id` = #{adminId}
-        </if>
+        <include refid="Resource_Filter"/>
     </select>
 
 </mapper>

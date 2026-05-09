@@ -32,14 +32,6 @@ const items = [
     null
   ),
   getItem(
-    "Category Management",
-    "/resource-category",
-    <i className="iconfont icon-icon-category" />,
-    null,
-    null,
-    "resource-category-menu"
-  ),
-  getItem(
     "Resources",
     "resource",
     <i className="iconfont icon-icon-file" />,

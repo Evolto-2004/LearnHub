@@ -13,10 +13,6 @@ import org.hibernate.validator.constraints.Length;
 @Data
 public class ResourceRequest {
 
-    @NotNull(message = "category_id参数不存在")
-    @JsonProperty("category_id")
-    private Integer categoryId;
-
     @NotBlank(message = "请输入资源名")
     @Length(min = 1, max = 254, message = "资源名长度在1-254个字符之间")
     private String name;

@@ -12,7 +12,6 @@ import xyz.learnhub.common.constant.BusinessTypeConstant;
 import xyz.learnhub.common.constant.ConfigConstant;
 import xyz.learnhub.common.context.BCtx;
 import xyz.learnhub.common.service.AppConfigService;
-import xyz.learnhub.common.service.CategoryService;
 import xyz.learnhub.common.service.DepartmentService;
 import xyz.learnhub.common.types.JsonResponse;
 import xyz.learnhub.common.util.StringUtil;
@@ -24,8 +23,6 @@ import xyz.learnhub.resource.service.ResourceService;
 public class SystemController {
 
     @Autowired private DepartmentService departmentService;
-
-    @Autowired private CategoryService categoryService;
 
     @Autowired private ResourceService resourceService;
 
@@ -57,9 +54,6 @@ public class SystemController {
 
         // 全部部门
         data.put("departments", departmentService.groupByParent());
-
-        // 全部资源分类
-        data.put("resource_categories", categoryService.groupByParent());
 
         return JsonResponse.data(data);
     }

@@ -16,7 +16,6 @@ type BasicDataModel = {
   admin_user_total: number;
   course_total: number;
   department_total: number;
-  resource_category_total: number;
   resource_file_total: number;
   resource_image_total: number;
   resource_video_total: number;
@@ -561,14 +560,6 @@ const DashboardPage = () => {
                 <div className={styles["info"]}>
                   <div className={styles["num"]}>
                     {basicData?.department_total}
-                  </div>
-                </div>
-              </div>
-              <div className={styles["label-item"]}>
-                <div className={styles["label"]}>Categories</div>
-                <div className={styles["info"]}>
-                  <div className={styles["num"]}>
-                    {basicData?.resource_category_total}
                   </div>
                 </div>
               </div>

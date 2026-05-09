@@ -1,7 +1,11 @@
 package xyz.learnhub.resource.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,10 +16,8 @@ import xyz.learnhub.common.types.paginate.ResourcePaginateFilter;
 import xyz.learnhub.common.util.S3Util;
 import xyz.learnhub.common.util.StringUtil;
 import xyz.learnhub.resource.domain.Resource;
-import xyz.learnhub.resource.domain.ResourceCategory;
 import xyz.learnhub.resource.domain.ResourceExtra;
 import xyz.learnhub.resource.mapper.ResourceMapper;
-import xyz.learnhub.resource.service.ResourceCategoryService;
 import xyz.learnhub.resource.service.ResourceExtraService;
 import xyz.learnhub.resource.service.ResourceService;
 
@@ -25,12 +27,11 @@ import xyz.learnhub.resource.service.ResourceService;
  * @createDate 2023-02-23 10:50:26
  */
 @Service
+@Slf4j
 public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource>
         implements ResourceService {
 
     @Autowired private ResourceExtraService resourceExtraService;
-
-    @Autowired private ResourceCategoryService relationService;
 
     @Autowired private AppConfigService appConfigService;
 
@@ -56,7 +57,6 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource>
     @Transactional
     public Resource create(
             Integer adminId,
-            String categoryIds,
             String type,
             String filename,
             String ext,
@@ -77,25 +77,6 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource>
         resource.setParentId(parentId);
         resource.setIsHidden(isHidden);
         save(resource);
-
-        if (categoryIds != null && categoryIds.trim().length() > 0) {
-            String[] idArray = categoryIds.split(",");
-            List<ResourceCategory> relations = new ArrayList<>();
-            for (String s : idArray) {
-                int tmpId = Integer.parseInt(s);
-                if (tmpId == 0) {
-                    continue;
-                }
-                relations.add(
-                        new ResourceCategory() {
-                            {
-                                setCid(tmpId);
-                                setRid(resource.getId());
-                            }
-                        });
-            }
-            relationService.saveBatch(relations);
-        }
         return resource;
     }
 
@@ -104,7 +85,6 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource>
     public void update(
             Resource resource,
             Integer adminId,
-            String categoryIds,
             String type,
             String filename,
             String ext,
@@ -124,25 +104,6 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource>
         resource.setParentId(parentId);
         resource.setIsHidden(isHidden);
         updateById(resource);
-
-        if (categoryIds != null && categoryIds.trim().length() > 0) {
-            String[] idArray = categoryIds.split(",");
-            List<ResourceCategory> relations = new ArrayList<>();
-            for (String s : idArray) {
-                int tmpId = Integer.parseInt(s);
-                if (tmpId == 0) {
-                    continue;
-                }
-                relations.add(
-                        new ResourceCategory() {
-                            {
-                                setCid(tmpId);
-                                setRid(resource.getId());
-                            }
-                        });
-            }
-            relationService.saveBatch(relations);
-        }
     }
 
     @Override
@@ -182,28 +143,11 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource>
 
     @Override
     @Transactional
-    public void updateNameAndCategoryId(Integer id, String name, Integer categoryId) {
+    public void updateName(Integer id, String name) {
         Resource resource = new Resource();
         resource.setId(id);
         resource.setName(name);
         updateById(resource);
-
-        relationService.rebuild(
-                id,
-                new ArrayList<>() {
-                    {
-                        add(categoryId);
-                    }
-                });
-    }
-
-    @Override
-    public List<Integer> categoryIds(Integer resourceId) {
-        return relationService
-                .list(relationService.query().getWrapper().eq("rid", resourceId))
-                .stream()
-                .map(ResourceCategory::getCid)
-                .toList();
     }
 
     @Override
@@ -239,16 +183,16 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource>
 
     @Override
     public Map<Integer, String> downloadResById(Integer id) {
-        Map<Integer, String> preSignUrlMap = new HashMap<>();
         Resource resource = getById(id);
-        if (StringUtil.isNotNull(resource)) {
-            String name = resource.getName() + "." + resource.getExtension();
-            String url =
-                    new S3Util(appConfigService.getS3Config())
-                            .generateEndpointPreSignUrl(resource.getPath(), name);
+        Map<Integer, String> preSignUrlMap = new HashMap<>();
+        try {
+            S3Util s3Util = new S3Util(appConfigService.getS3Config());
+            String url = s3Util.generateEndpointPreSignUrl(resource.getPath(), resource.getName());
             if (StringUtil.isNotEmpty(url)) {
                 preSignUrlMap.put(resource.getId(), url);
             }
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
         return preSignUrlMap;
     }

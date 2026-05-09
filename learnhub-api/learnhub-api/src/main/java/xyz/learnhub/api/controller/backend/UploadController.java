@@ -59,14 +59,11 @@ public class UploadController {
                 || StringUtil.isEmpty(s3Config.getRegion())) {
             throw new ServiceException("存储服务未配置");
         }
-        String categoryIds = MapUtils.getString(params, "category_ids");
-
         UploadFileInfo info = uploadService.upload(s3Config, file, null);
 
         Resource res =
                 resourceService.create(
                         BCtx.getId(),
-                        categoryIds,
                         info.getResourceType(),
                         info.getOriginalName(),
                         info.getExtension(),
@@ -175,7 +172,6 @@ public class UploadController {
         Resource resource =
                 resourceService.create(
                         BCtx.getId(),
-                        req.getCategoryIds(),
                         type,
                         originalFilename,
                         extension,
@@ -202,7 +198,7 @@ public class UploadController {
             if (StringUtil.isNotEmpty(poster)) {
                 Resource posterResource =
                         uploadService.storeBase64Image(
-                                appConfigService.getS3Config(), BCtx.getId(), poster, null);
+                                appConfigService.getS3Config(), BCtx.getId(), poster);
                 posterId = posterResource.getId();
             }
             resourceExtraService.create(resource.getId(), duration, posterId);

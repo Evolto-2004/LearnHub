@@ -15,7 +15,6 @@ public interface UploadService {
     UploadFileInfo upload(S3Config s3Config, MultipartFile file, String dir)
             throws ServiceException;
 
-    Resource storeBase64Image(
-            S3Config s3Config, Integer adminId, String content, String categoryIds)
+    Resource storeBase64Image(S3Config s3Config, Integer adminId, String content)
             throws ServiceException;
 }

@@ -9,7 +9,6 @@ import {
   Modal,
   message,
   Image,
-  TreeSelect,
   Spin,
   Tag,
 } from "antd";
@@ -31,7 +30,6 @@ import defaultThumb3 from "../../../assets/thumb/thumb3.png";
 const { confirm } = Modal;
 
 interface PropInterface {
-  cateIds: any;
   open: boolean;
   onCancel: () => void;
 }
@@ -42,16 +40,11 @@ interface Option {
   children?: Option[];
 }
 
-export const CourseCreate: React.FC<PropInterface> = ({
-  cateIds,
-  open,
-  onCancel,
-}) => {
+export const CourseCreate: React.FC<PropInterface> = ({ open, onCancel }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [init, setInit] = useState(true);
   const [departments, setDepartments] = useState<Option[]>([]);
-  const [categories, setCategories] = useState<Option[]>([]);
   const [thumb, setThumb] = useState("");
   const [chapterType, setChapterType] = useState(0);
   const [chapters, setChapters] = useState<CourseChaptersModel[]>([]);
@@ -76,7 +69,7 @@ export const CourseCreate: React.FC<PropInterface> = ({
     if (open) {
       initData();
     }
-  }, [open, cateIds]);
+  }, [open]);
 
   useEffect(() => {
     form.setFieldsValue({
@@ -101,7 +94,6 @@ export const CourseCreate: React.FC<PropInterface> = ({
 
   const initData = async () => {
     await getParams();
-    await getCategory();
     setInit(false);
   };
 
@@ -119,48 +111,6 @@ export const CourseCreate: React.FC<PropInterface> = ({
       dep_ids: [],
     });
     setType(type);
-  };
-
-  const checkChild = (departments: any[], id: number) => {
-    for (let key in departments) {
-      for (let i = 0; i < departments[key].length; i++) {
-        if (departments[key][i].id === id) {
-          return departments[key][i];
-        }
-      }
-    }
-  };
-
-  const getCategory = async () => {
-    let res: any = await course.createCourse();
-    const categories = res.data.categories;
-    if (JSON.stringify(categories) !== "{}") {
-      const new_arr: any = checkArr(categories, 0, null);
-      setCategories(new_arr);
-    }
-
-    if (cateIds.length !== 0 && cateIds[0] !== 0) {
-      let item = checkChild(res.data.categories, cateIds[0]);
-      let arr: any[] = [];
-      if (item === undefined) {
-        arr.push(cateIds[0]);
-      } else if (item.parent_chain === "") {
-        arr.push(cateIds[0]);
-      } else {
-        let new_arr = item.parent_chain.split(",");
-        new_arr.map((num: any) => {
-          arr.push(Number(num));
-        });
-        arr.push(cateIds[0]);
-      }
-      form.setFieldsValue({
-        category_ids: arr,
-      });
-    } else {
-      form.setFieldsValue({
-        category_ids: cateIds,
-      });
-    }
   };
 
   const getNewTitle = (title: any, id: number, counts: any) => {
@@ -225,7 +175,6 @@ export const CourseCreate: React.FC<PropInterface> = ({
         1,
         values.isRequired,
         dep_ids,
-        values.category_ids,
         chapters,
         treeData,
         attachmentData
@@ -547,21 +496,6 @@ export const CourseCreate: React.FC<PropInterface> = ({
               onFinishFailed={onFinishFailed}
               autoComplete="off"
             >
-              <Form.Item
-                label="Course Category"
-                name="category_ids"
-                rules={[{ required: true, message: "Please select a course category!" }]}
-              >
-                <TreeSelect
-                  showCheckedStrategy={TreeSelect.SHOW_ALL}
-                  allowClear
-                  multiple
-                  style={{ width: 424 }}
-                  treeData={categories}
-                  placeholder="Select a course category"
-                  treeDefaultExpandAll
-                />
-              </Form.Item>
               <Form.Item
                 label="Course Title"
                 name="title"

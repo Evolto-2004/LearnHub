@@ -5,7 +5,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import xyz.learnhub.api.event.CourseDestroyEvent;
 import xyz.learnhub.course.service.CourseAttachmentService;
-import xyz.learnhub.course.service.CourseCategoryService;
 import xyz.learnhub.course.service.CourseDepartmentUserService;
 import xyz.learnhub.course.service.UserCourseHourRecordService;
 import xyz.learnhub.course.service.UserCourseRecordService;
@@ -19,8 +18,6 @@ public class CourseDestroyListener {
 
     @Autowired private CourseDepartmentUserService courseDepartmentUserService;
 
-    @Autowired private CourseCategoryService courseCategoryService;
-
     @Autowired private UserCourseRecordService userCourseRecordService;
 
     @Autowired private UserCourseHourRecordService userCourseHourRecordService;
@@ -30,11 +27,6 @@ public class CourseDestroyListener {
     @EventListener
     public void departmentRelateRemove(CourseDestroyEvent event) {
         courseDepartmentUserService.removeByCourseId(event.getCourseId());
-    }
-
-    @EventListener
-    public void categoryRelateRemove(CourseDestroyEvent event) {
-        courseCategoryService.removeByCourseId(event.getCourseId());
     }
 
     @EventListener

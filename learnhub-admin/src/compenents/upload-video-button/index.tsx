@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import { uploadAction } from "../../store/user/loginUserSlice";
 
 interface PropsInterface {
-  categoryIds: number[];
   onUpdate: () => void;
 }
 
@@ -29,7 +28,6 @@ export const UploadVideoButton = (props: PropsInterface) => {
           dispatch(
             uploadAction({
               uploadStatus: true,
-              uploadCateIds: props.categoryIds,
             })
           );
         }}

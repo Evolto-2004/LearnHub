@@ -63,31 +63,11 @@ declare global {
     title: string;
   }
 
-  interface CategoriesBoxModel {
-    [key: number]: CategoriesItemModel[];
-  }
-
-  interface CategoriesItemModel {
-    id: number;
-    name: string;
-    parent_chain: string;
-    parent_id: number;
-    sort: number;
-  }
-
-  interface CategoriesModel {
-    [key: number]: string;
-  }
-
   interface DepartmentsModel {
     [key: number]: string;
   }
 
   interface DepIdsModel {
-    [key: number]: number[];
-  }
-
-  interface CategoryIdsModel {
     [key: number]: number[];
   }
 

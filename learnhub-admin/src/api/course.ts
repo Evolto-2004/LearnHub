@@ -6,8 +6,7 @@ export function courseList(
   sortField: string,
   sortAlgo: string,
   title: string,
-  depIds: string,
-  categoryIds: string
+  depIds: string
 ) {
   return client.get("/backend/v1/course/index", {
     page: page,
@@ -16,7 +15,6 @@ export function courseList(
     sort_algo: sortAlgo,
     title: title,
     dep_ids: depIds,
-    category_ids: categoryIds,
   });
 }
 
@@ -25,7 +23,6 @@ export function createCourse() {
 }
 
 // depIds => Departmentid数组，请用英文逗号连接
-// categoryIds => 所属Categories组，请用英文逗号连接
 export function storeCourse(
   title: string,
   thumb: string,
@@ -33,7 +30,6 @@ export function storeCourse(
   isShow: number,
   isRequired: number,
   depIds: number[],
-  categoryIds: number[],
   chapters: any[],
   hours: any[],
   attachments: any[]
@@ -45,7 +41,6 @@ export function storeCourse(
     is_show: isShow,
     is_required: isRequired,
     dep_ids: depIds,
-    category_ids: categoryIds,
     chapters: chapters,
     hours: hours,
     attachments: attachments,
@@ -64,7 +59,6 @@ export function updateCourse(
   isShow: number,
   isRequired: number,
   depIds: number[],
-  categoryIds: number[],
   chapters: number[],
   hours: number[],
   publishedAt: string
@@ -76,7 +70,6 @@ export function updateCourse(
     is_show: isShow,
     is_required: isRequired,
     dep_ids: depIds,
-    category_ids: categoryIds,
     chapters: chapters,
     hours: hours,
     sort_at: publishedAt,

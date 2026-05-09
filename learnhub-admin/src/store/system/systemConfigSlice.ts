@@ -7,7 +7,6 @@ type SystemConfigStoreInterface = {
   memberDefaultAvatar?: string;
   courseDefaultThumbs?: string[];
   departments?: any;
-  resourceCategories?: any;
   resourceUrl?: ResourceUrlModel;
 };
 
@@ -25,14 +24,10 @@ const systemConfigSlice = createSlice({
     saveDepartmentsAction(stage, e) {
       stage.value.departments = e.payload;
     },
-    saveCategoriesAction(stage, e) {
-      stage.value.resourceCategories = e.payload;
-    },
   },
 });
 
 export default systemConfigSlice.reducer;
-export const { saveConfigAction, saveDepartmentsAction, saveCategoriesAction } =
-  systemConfigSlice.actions;
+export const { saveConfigAction, saveDepartmentsAction } = systemConfigSlice.actions;
 
 export type { SystemConfigStoreInterface };

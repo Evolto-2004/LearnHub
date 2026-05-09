@@ -17,7 +17,6 @@ import { minioMergeVideo, minioUploadId } from "../../api/upload";
 import { UploadChunk } from "../../js/minio-upload-chunk";
 
 interface PropsInterface {
-  categoryIds: number[];
   onUpdate: () => void;
 }
 
@@ -115,7 +114,6 @@ export const UploadCoursewareButton = (props: PropsInterface) => {
           minioMergeVideo(
             data["filename"],
             data["upload_id"],
-            props.categoryIds.join(","),
             item.file.name,
             extension,
             item.file.size,

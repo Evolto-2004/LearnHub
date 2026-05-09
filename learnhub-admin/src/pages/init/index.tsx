@@ -27,7 +27,6 @@ const InitPage = (props: Props) => {
         memberDefaultAvatar: props.configData["member.default_avatar"],
       courseDefaultThumbs: props.configData["default.course_thumbs"],
       departments: props.configData["departments"],
-      resourceCategories: props.configData["resource_categories"],
     };
     dispatch(saveConfigAction(config));
   }

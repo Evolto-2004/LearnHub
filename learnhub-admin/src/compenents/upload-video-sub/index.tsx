@@ -3,7 +3,7 @@ import { Row, Col, Empty, Table, Spin, Typography, Input, Button } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { resource } from "../../api";
 import styles from "./index.module.less";
-import { DurationText, TreeCategory } from "../../compenents";
+import { DurationText } from "../../compenents";
 
 interface VideoItem {
   id: number;
@@ -38,7 +38,6 @@ interface PropsInterface {
 
 export const UploadVideoSub = (props: PropsInterface) => {
   const [init, setInit] = useState(true);
-  const [category_ids, setCategoryIds] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [videoList, setVideoList] = useState<VideoItem[]>([]);
   const [videosExtra, setVideoExtra] = useState<any>([]);
@@ -53,7 +52,7 @@ export const UploadVideoSub = (props: PropsInterface) => {
   useEffect(() => {
     setInit(true);
     getvideoList();
-  }, [props.open, category_ids, refresh, page, size]);
+  }, [props.open, refresh, page, size]);
 
   useEffect(() => {
     if (props.defaultCheckedList.length > 0) {
@@ -64,9 +63,8 @@ export const UploadVideoSub = (props: PropsInterface) => {
   // 获取列表
   const getvideoList = () => {
     setLoading(true);
-    let categoryIds = category_ids.join(",");
     resource
-      .resourceList(page, size, "", "", title, "VIDEO", categoryIds)
+      .resourceList(page, size, "", "", title, "VIDEO")
       .then((res: any) => {
         setTotal(res.data.result.total);
         setVideoExtra(res.data.videos_extra);
@@ -159,18 +157,8 @@ export const UploadVideoSub = (props: PropsInterface) => {
   return (
     <>
       <Row style={{ width: 752, minHeight: 520 }}>
-        <Col span={7}>
-          <div className="float-left">
-            <TreeCategory
-              selected={[]}
-              type="no-cate"
-              text={props.label}
-              onUpdate={(keys: any) => setCategoryIds(keys)}
-            />
-          </div>
-        </Col>
-        <Col span={17}>
-          <Row style={{ marginBottom: 24, paddingLeft: 10 }}>
+        <Col span={24}>
+          <Row style={{ marginBottom: 24 }}>
             <div className="float-left  j-b-flex">
               <div className="d-flex"></div>
               <div className="d-flex">

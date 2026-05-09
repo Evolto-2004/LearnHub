@@ -14,8 +14,6 @@ public class CoursePaginateFiler {
 
     private List<Integer> depIds;
 
-    private List<Integer> categoryIds;
-
     private Integer isRequired;
 
     private String sortField;

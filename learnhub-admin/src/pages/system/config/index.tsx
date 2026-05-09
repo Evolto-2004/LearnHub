@@ -231,7 +231,6 @@ const SystemConfigPage = () => {
         memberDefaultAvatar: res.data["member.default_avatar"],
         courseDefaultThumbs: res.data["default.course_thumbs"],
         departments: res.data["departments"],
-        resourceCategories: res.data["resource_categories"],
       };
       dispatch(saveConfigAction(data));
     });
@@ -349,8 +348,8 @@ const SystemConfigPage = () => {
         <Form
           form={form}
           name="n-basic"
-          labelCol={{ span: 3 }}
-          wrapperCol={{ span: 21 }}
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 19 }}
           style={{ width: 1000, paddingTop: 30 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
@@ -479,7 +478,7 @@ const SystemConfigPage = () => {
           )}
           <Form.Item
             style={{ marginBottom: 30 }}
-            wrapperCol={{ offset: 3, span: 21 }}
+            wrapperCol={{ offset: 5, span: 19 }}
           >
             <Button type="primary" htmlType="submit" loading={loading}>
               Save

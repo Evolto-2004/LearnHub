@@ -13,7 +13,6 @@ import xyz.learnhub.api.request.frontend.ChangePasswordRequest;
 import xyz.learnhub.common.constant.CommonConstant;
 import xyz.learnhub.common.constant.FrontendConstant;
 import xyz.learnhub.common.context.FCtx;
-import xyz.learnhub.common.domain.Category;
 import xyz.learnhub.common.domain.Department;
 import xyz.learnhub.common.domain.User;
 import xyz.learnhub.common.domain.UserUploadImageLog;
@@ -50,8 +49,6 @@ public class UserController {
     @Autowired private UserLearnDurationStatsService userLearnDurationStatsService;
 
     @Autowired private UploadService uploadService;
-
-    @Autowired private CategoryService categoryService;
 
     @Autowired private AppConfigService appConfigService;
 
@@ -102,7 +99,6 @@ public class UserController {
         Resource resource =
                 resourceService.create(
                         CommonConstant.ZERO,
-                        null,
                         info.getResourceType(),
                         info.getOriginalName(),
                         info.getExtension(),
@@ -145,8 +141,6 @@ public class UserController {
             return JsonResponse.error("请选择部门");
         }
 
-        Integer categoryId = MapUtils.getInteger(params, "category_id");
-
         List<Integer> userJoinDepIds = userService.getDepIdsByUserId(FCtx.getId());
         if (userJoinDepIds == null) {
             return JsonResponse.error("当前学员未加入任何部门");
@@ -171,25 +165,12 @@ public class UserController {
             }
         }
 
-        // 获取所有子分类ID
-        List<Integer> allCategoryIds = new ArrayList<>();
-        if (categoryId != null && categoryId > 0) {
-            allCategoryIds.add(categoryId);
-            // 查询所有的子分类
-            List<Category> categoryList = categoryService.getChildCategorysByParentId(categoryId);
-            if (StringUtil.isNotEmpty(categoryList)) {
-                for (Category category : categoryList) {
-                    allCategoryIds.add(category.getId());
-                }
-            }
-        }
-
         // -------- 读取当前学员可以参加的课程 ----------
         List<Course> courses = new ArrayList<>();
         // 读取部门课
-        List<Course> depCourses = courseService.getDepCoursesAndShow(allDepIds, allCategoryIds);
+        List<Course> depCourses = courseService.getDepCoursesAndShow(allDepIds);
         // 全部部门课
-        List<Course> openCourses = courseService.getOpenCoursesAndShow(500, allCategoryIds);
+        List<Course> openCourses = courseService.getOpenCoursesAndShow(500);
         // 汇总到一个list中
         if (depCourses != null && !depCourses.isEmpty()) {
             courses.addAll(depCourses);

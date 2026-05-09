@@ -6,8 +6,7 @@ export function resourceList(
   sortField: string,
   sortAlgo: string,
   name: string,
-  type: string,
-  categoryIds: string
+  type: string
 ) {
   return client.get("/backend/v1/resource/index", {
     page,
@@ -16,7 +15,6 @@ export function resourceList(
     sort_algo: sortAlgo,
     name,
     type,
-    category_ids: categoryIds,
   });
 }
 
@@ -25,7 +23,6 @@ export function createResource(type: string) {
 }
 
 export function storeResource(
-  categoryId: number,
   name: string,
   extension: string,
   size: number,
@@ -38,7 +35,6 @@ export function storeResource(
   let data = Object.assign(
     {},
     {
-      category_id: categoryId,
       name,
       extension,
       size,

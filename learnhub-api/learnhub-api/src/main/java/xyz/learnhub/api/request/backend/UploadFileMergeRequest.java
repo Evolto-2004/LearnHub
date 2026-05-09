@@ -32,8 +32,5 @@ public class UploadFileMergeRequest {
     @NotBlank(message = "请输入extension")
     private String extension;
 
-    @JsonProperty("category_ids")
-    private String categoryIds;
-
     private String poster;
 }

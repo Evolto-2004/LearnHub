@@ -1,6 +1,6 @@
 FROM node:20-alpine AS node-builder
 
-RUN corepack enable
+RUN corepack enable && corepack prepare pnpm@8.15.9 --activate
 
 COPY learnhub-admin /app/admin
 COPY learnhub-pc /app/pc

@@ -13,6 +13,7 @@ import com.amazonaws.services.s3.model.Grant;
 import com.amazonaws.services.s3.model.GroupGrantee;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,6 +55,7 @@ public class S3Util {
                         defaultConfig.getEndpoint(), defaultConfig.getRegion());
 
         AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard();
+        builder.withPathStyleAccessEnabled(shouldUsePathStyleAccess(defaultConfig.getEndpoint()));
 
         AmazonS3 client =
                 builder.withCredentials(new AWSStaticCredentialsProvider(credentials))
@@ -86,6 +88,26 @@ public class S3Util {
         }
 
         return client;
+    }
+
+    private boolean shouldUsePathStyleAccess(String endpoint) {
+        if (StringUtil.isEmpty(endpoint)) {
+            return false;
+        }
+        try {
+            String host = URI.create(endpoint).getHost();
+            if (host == null) {
+                return false;
+            }
+            String lowerHost = host.toLowerCase();
+            return "localhost".equals(lowerHost)
+                    || lowerHost.endsWith(".localhost")
+                    || "minio".equals(lowerHost)
+                    || lowerHost.endsWith(".minio")
+                    || "127.0.0.1".equals(lowerHost);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     @SneakyThrows

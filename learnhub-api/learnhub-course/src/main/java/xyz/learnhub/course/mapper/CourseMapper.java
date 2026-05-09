@@ -18,5 +18,5 @@ public interface CourseMapper extends BaseMapper<Course> {
 
     Long paginateCount(CoursePaginateFiler filer);
 
-    List<Course> openCoursesAndShow(Integer limit, List<Integer> categoryIds);
+    List<Course> openCoursesAndShow(Integer limit);
 }

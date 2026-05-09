@@ -8,7 +8,6 @@ import {
   Input,
   message,
   Space,
-  Tabs,
   Dropdown,
 } from "antd";
 import { course } from "../../api";
@@ -21,8 +20,7 @@ import type { MenuProps } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { dateFormat, translateAdminIdentity } from "../../utils/index";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { TreeDepartment, TreeCategory, PerButton } from "../../compenents";
-import type { TabsProps } from "antd";
+import { TreeDepartment, PerButton } from "../../compenents";
 import { CourseCreate } from "./compenents/create";
 import { CourseUpdate } from "./compenents/update";
 import { CourseHourUpdate } from "./compenents/hour-update";
@@ -68,96 +66,33 @@ const CoursePage = () => {
   const [total, setTotal] = useState(0);
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [category_ids, setCategoryIds] = useState<number[]>([]);
   const [dep_ids, setDepIds] = useState<number[]>([]);
-  const [selLabel, setLabel] = useState<string>(
-    result.get("label") ? String(result.get("label")) : "All Categories"
-  );
   const [selDepLabel, setDepLabel] = useState<string>(
     result.get("label") ? String(result.get("label")) : "All Departments"
   );
-  const [course_category_ids, setCourseCategoryIds] =
-    useState<CategoryIdsModel>({});
   const [course_dep_ids, setCourseDepIds] = useState<DepIdsModel>({});
-  const [categories, setCategories] = useState<CategoriesModel>({});
   const [resourceUrl, setResourceUrl] = useState<ResourceUrlModel>({});
   const [departments, setDepartments] = useState<DepartmentsModel>({});
-  const [tabKey, setTabKey] = useState(result.get("did") ? "2" : "1");
   const [adminUsers, setAdminUsers] = useState<any>({});
   const [createVisible, setCreateVisible] = useState(false);
   const [updateVisible, setUpdateVisible] = useState(false);
   const [updateHourVisible, setHourUpdateVisible] = useState(false);
   const [updateAttachmentVisible, setUpdateAttachmentVisible] = useState(false);
   const [cid, setCid] = useState(0);
-  const [cateId, setCateId] = useState(Number(result.get("cid")));
   const [did, setDid] = useState(Number(result.get("did")));
 
   useEffect(() => {
     getList();
-  }, [category_ids, dep_ids, refresh, page, size, tabKey]);
+  }, [dep_ids, refresh, page, size]);
 
   useEffect(() => {
-    setCateId(Number(result.get("cid")));
-    if (Number(result.get("cid"))) {
-      let arr = [];
-      arr.push(Number(result.get("cid")));
-      setCategoryIds(arr);
-    }
     setDid(Number(result.get("did")));
     if (Number(result.get("did"))) {
       let arr = [];
       arr.push(Number(result.get("did")));
       setDepIds(arr);
     }
-  }, [result.get("cid"), result.get("did")]);
-
-  const items: TabsProps["items"] = [
-    {
-      key: "1",
-      label: `Category`,
-      children: (
-        <div className="float-left">
-          <TreeCategory
-            selected={category_ids}
-            type=""
-            text={"Category"}
-            onUpdate={(keys: any, title: any) => {
-              resetLocalSearchParams({
-                page: 1,
-              });
-              setCategoryIds(keys);
-              if (typeof title === "string") {
-                setLabel(title);
-              } else {
-                setLabel(title.props.children[0]);
-              }
-            }}
-          />
-        </div>
-      ),
-    },
-    {
-      key: "2",
-      label: `Department`,
-      children: (
-        <div className="float-left">
-          <TreeDepartment
-            selected={dep_ids}
-            showNum={false}
-            refresh={refresh}
-            text={"Department"}
-            onUpdate={(keys: any, title: any) => {
-              resetLocalSearchParams({
-                page: 1,
-              });
-              setDepIds(keys);
-              setDepLabel(title);
-            }}
-          />
-        </div>
-      ),
-    },
-  ];
+  }, [result.get("did")]);
 
   const columns: ColumnsType<DataType> = [
     {
@@ -181,23 +116,6 @@ const CoursePage = () => {
             }
           ></Image>
           <span className="ml-8">{record.title}</span>
-        </div>
-      ),
-    },
-    {
-      title: "Course Category",
-      dataIndex: "id",
-      render: (id: number) => (
-        <div className="float-left">
-          {course_category_ids[id].map((item: any, index: number) => {
-            return (
-              <span key={index}>
-                {index === course_category_ids[id].length - 1
-                  ? categories[item]
-                  : categories[item] + ", "}
-              </span>
-            );
-          })}
         </div>
       ),
     },
@@ -376,21 +294,14 @@ const CoursePage = () => {
   // 获取列表
   const getList = () => {
     setLoading(true);
-    let categoryIds = "";
     let depIds = "";
-    if (tabKey === "1") {
-      categoryIds = category_ids.join(",");
-    } else {
-      depIds = dep_ids.join(",");
-    }
+    depIds = dep_ids.join(",");
     course
-      .courseList(page, size, "", "", title ? title : "", depIds, categoryIds)
+      .courseList(page, size, "", "", title ? title : "", depIds)
       .then((res: any) => {
         setTotal(res.data.total);
         setList(res.data.data);
-        setCourseCategoryIds(res.data.course_category_ids);
         setCourseDepIds(res.data.course_dep_ids);
-        setCategories(res.data.categories);
         setDepartments(res.data.departments);
         setAdminUsers(res.data.admin_users);
         setResourceUrl(res.data.resource_url)
@@ -445,25 +356,27 @@ const CoursePage = () => {
     );
   };
 
-  const onChange = (key: string) => {
-    setTabKey(key);
-  };
-
   return (
     <>
       <div className="tree-main-body">
         <div className="left-box">
-          <Tabs
-            defaultActiveKey={tabKey}
-            centered
-            tabBarGutter={55}
-            items={items}
-            onChange={onChange}
+          <TreeDepartment
+            selected={dep_ids}
+            showNum={false}
+            refresh={refresh}
+            text={"Department"}
+            onUpdate={(keys: any, title: any) => {
+              resetLocalSearchParams({
+                page: 1,
+              });
+              setDepIds(keys);
+              setDepLabel(title);
+            }}
           />
         </div>
         <div className="right-box">
           <div className="learnhub-main-title float-left mb-24">
-            Courses | {tabKey === "1" ? selLabel : selDepLabel}
+            Courses | {selDepLabel}
           </div>
           <div className="float-left j-b-flex mb-24">
             <div className="d-flex">
@@ -519,8 +432,6 @@ const CoursePage = () => {
               rowKey={(record) => record.id}
             />
             <CourseCreate
-              cateIds={tabKey === "1" ? category_ids : []}
-              // depIds={tabKey === "2" ? dep_ids : []}
               open={createVisible}
               onCancel={() => {
                 setCreateVisible(false);

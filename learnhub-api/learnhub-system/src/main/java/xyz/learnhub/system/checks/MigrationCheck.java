@@ -17,6 +17,9 @@ import xyz.learnhub.system.service.MigrationService;
 @Slf4j
 public class MigrationCheck implements CommandLineRunner {
 
+    private static final String CATEGORY_CLEANUP_MIGRATION =
+            "20260509_00_00_00_drop_category_module";
+
     public static final List<Map<String, String>> TABLE_SQL =
             new ArrayList<>() {
                 {
@@ -371,28 +374,6 @@ public class MigrationCheck implements CommandLineRunner {
                     add(
                             new HashMap<>() {
                                 {
-                                    put("table", "resource_categories");
-                                    put("name", "20231208_14_00_00_resource_categories");
-                                    put(
-                                            "sql",
-                                            """
-                                                    CREATE TABLE `resource_categories` (
-                                                      `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-                                                      `parent_id` int(11) NOT NULL DEFAULT 0 COMMENT '父ID',
-                                                      `parent_chain` varchar(2550) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '父链',
-                                                      `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '分类名',
-                                                      `sort` int(11) NOT NULL DEFAULT 0 COMMENT '升序',
-                                                      `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                                      `updated_at` timestamp NULL DEFAULT NULL COMMENT '修改时间',
-                                                      PRIMARY KEY (`id`)
-                                                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT '部门表';
-                                                    """);
-                                }
-                            });
-
-                    add(
-                            new HashMap<>() {
-                                {
                                     put("table", "resource");
                                     put("name", "20231208_14_00_00_resource");
                                     put(
@@ -413,42 +394,6 @@ public class MigrationCheck implements CommandLineRunner {
                                                        PRIMARY KEY (`id`),
                                                        KEY `type` (`type`)
                                                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT '资源表';
-                                                    """);
-                                }
-                            });
-
-                    add(
-                            new HashMap<>() {
-                                {
-                                    put("table", "resource_category");
-                                    put("name", "20231208_14_00_00_resource_category");
-                                    put(
-                                            "sql",
-                                            """
-                                                    CREATE TABLE `resource_category` (
-                                                      `cid` int(11) NOT NULL DEFAULT 0 COMMENT '分类ID',
-                                                      `rid` int(11) NOT NULL DEFAULT 0 COMMENT '资源ID',
-                                                      KEY `cid` (`cid`),
-                                                      KEY `rid` (`rid`)
-                                                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT '资源分类关联表';
-                                                    """);
-                                }
-                            });
-
-                    add(
-                            new HashMap<>() {
-                                {
-                                    put("table", "resource_course_category");
-                                    put("name", "20231208_14_00_00_resource_course_category");
-                                    put(
-                                            "sql",
-                                            """
-                                                    CREATE TABLE `resource_course_category` (
-                                                      `course_id` int(11) NOT NULL DEFAULT 0 COMMENT '课程ID',
-                                                      `category_id` int(11) NOT NULL DEFAULT 0 COMMENT '父级ID',
-                                                      KEY `course_id` (`course_id`),
-                                                      KEY `category_id` (`category_id`)
-                                                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT '课程分类关联表';
                                                     """);
                                 }
                             });
@@ -859,8 +804,43 @@ public class MigrationCheck implements CommandLineRunner {
                 migrationService.store(migrationName);
             }
 
+            runCategoryModuleCleanup();
         } catch (Exception e) {
             log.error("数据库迁移执行失败,错误信息:" + e.getMessage());
         }
+    }
+
+    private void runCategoryModuleCleanup() {
+        List<String> migrations = migrationService.all();
+        if (migrations.contains(CATEGORY_CLEANUP_MIGRATION)) {
+            return;
+        }
+
+        jdbcTemplate.execute(
+                """
+                        DELETE FROM `admin_role_permission`
+                        WHERE `perm_id` IN (
+                            SELECT `id` FROM `admin_permissions`
+                            WHERE `slug` IN ('resource-category', 'resource-category-menu')
+                        )
+                        """);
+        jdbcTemplate.execute(
+                """
+                        DELETE FROM `admin_permissions`
+                        WHERE `slug` IN ('resource-category', 'resource-category-menu')
+                        """);
+        jdbcTemplate.execute("DROP TABLE IF EXISTS `resource_course_category`");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS `resource_category`");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS `resource_categories`");
+        jdbcTemplate.execute(
+                """
+                        DELETE FROM `migrations`
+                        WHERE `migration` IN (
+                            '20231208_14_00_00_resource_categories',
+                            '20231208_14_00_00_resource_category',
+                            '20231208_14_00_00_resource_course_category'
+                        )
+                        """);
+        migrationService.store(CATEGORY_CLEANUP_MIGRATION);
     }
 }

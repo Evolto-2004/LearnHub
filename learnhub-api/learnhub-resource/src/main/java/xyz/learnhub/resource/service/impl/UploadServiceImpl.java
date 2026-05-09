@@ -75,8 +75,7 @@ public class UploadServiceImpl implements UploadService {
 
     @Override
     @SneakyThrows
-    public Resource storeBase64Image(
-            S3Config s3Config, Integer adminId, String content, String categoryIds) {
+    public Resource storeBase64Image(S3Config s3Config, Integer adminId, String content) {
         // data:image/jpeg;base64,
         String[] base64Rows = content.split(",");
         // 解析出content-type
@@ -102,7 +101,6 @@ public class UploadServiceImpl implements UploadService {
         // 上传记录
         return resourceService.create(
                 adminId,
-                categoryIds,
                 type,
                 filename,
                 ext,

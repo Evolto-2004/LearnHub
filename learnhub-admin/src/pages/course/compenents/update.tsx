@@ -5,7 +5,6 @@ import {
   Button,
   Drawer,
   Form,
-  TreeSelect,
   DatePicker,
   Input,
   message,
@@ -43,7 +42,6 @@ export const CourseUpdate: React.FC<PropInterface> = ({
   const [init, setInit] = useState(true);
   const [loading, setLoading] = useState(false);
   const [departments, setDepartments] = useState<Option[]>([]);
-  const [categories, setCategories] = useState<Option[]>([]);
   const [resourceUrl, setResourceUrl] = useState<ResourceUrlModel>({});
   const [thumb, setThumb] = useState("");
   const [depIds, setDepIds] = useState<number[]>([]);
@@ -58,20 +56,10 @@ export const CourseUpdate: React.FC<PropInterface> = ({
     }
     if (open) {
       getParams();
-      getCategory();
       getDetail();
     }
   }, [form, id, open]);
 
-  const getCategory = () => {
-    course.createCourse().then((res: any) => {
-      const categories = res.data.categories;
-      if (JSON.stringify(categories) !== "{}") {
-        const new_arr: any = checkArr(categories, 0, null);
-        setCategories(new_arr);
-      }
-    });
-  };
   const getParams = () => {
     department.departmentList({}).then((res: any) => {
       const departments = res.data.departments;
@@ -90,7 +78,6 @@ export const CourseUpdate: React.FC<PropInterface> = ({
       form.setFieldsValue({
         title: res.data.course.title,
         thumb: res.data.course.thumb,
-        category_ids: res.data.category_ids,
         isRequired: res.data.course.is_required,
         short_desc: res.data.course.short_desc,
         hasChapter: chapterType,
@@ -199,7 +186,6 @@ export const CourseUpdate: React.FC<PropInterface> = ({
         1,
         values.isRequired,
         dep_ids,
-        values.category_ids,
         [],
         [],
         values.published_at
@@ -281,21 +267,6 @@ export const CourseUpdate: React.FC<PropInterface> = ({
               onFinishFailed={onFinishFailed}
               autoComplete="off"
             >
-              <Form.Item
-                label="Course Category"
-                name="category_ids"
-                rules={[{ required: true, message: "Please select a course category!" }]}
-              >
-                <TreeSelect
-                  showCheckedStrategy={TreeSelect.SHOW_ALL}
-                  allowClear
-                  multiple
-                  style={{ width: 424 }}
-                  treeData={categories}
-                  placeholder="Select a course category"
-                  treeDefaultExpandAll
-                />
-              </Form.Item>
               <Form.Item
                 label="Course Title"
                 name="title"

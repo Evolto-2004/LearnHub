@@ -31,8 +31,6 @@ public class DashboardController {
 
     @Autowired private AdminUserService adminUserService;
 
-    @Autowired private CategoryService categoryService;
-
     @Autowired private UserService userService;
 
     @Autowired private CourseService courseService;
@@ -56,7 +54,6 @@ public class DashboardController {
         data.put("course_total", courseService.total()); // 线上课数量
 
         data.put("department_total", departmentService.total());
-        data.put("resource_category_total", categoryService.total());
         data.put("admin_user_total", adminUserService.total());
 
         data.put(

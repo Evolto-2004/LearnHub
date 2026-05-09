@@ -11,17 +11,14 @@ import {
   Pagination,
 } from "antd";
 import { resource } from "../../../api";
-import { useLocation } from "react-router-dom";
 import styles from "./index.module.less";
 import { UploadImageSub } from "../../../compenents/upload-image-button/upload-image-sub";
-import { TreeCategory } from "../../../compenents";
 import { ExclamationCircleFilled, CheckOutlined } from "@ant-design/icons";
 
 const { confirm } = Modal;
 
 interface ImageItem {
   id: number;
-  category_id: number;
   name: string;
   extension: string;
   size: number;
@@ -33,36 +30,21 @@ interface ImageItem {
 }
 
 const ResourceImagesPage = () => {
-  const result = new URLSearchParams(useLocation().search);
   const [imageList, setImageList] = useState<ImageItem[]>([]);
   const [resourceUrl, setResourceUrl] = useState<ResourceUrlModel>({});
   const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(32);
   const [total, setTotal] = useState(0);
-  const [category_ids, setCategoryIds] = useState<number[]>([]);
   const [selectKey, setSelectKey] = useState<number[]>([]);
   const [visibleArr, setVisibleArr] = useState<boolean[]>([]);
   const [hoverArr, setHoverArr] = useState<boolean[]>([]);
-  const [selLabel, setLabel] = useState<string>(
-    result.get("label") ? String(result.get("label")) : "All Images"
-  );
   const [loading, setLoading] = useState(false);
-  const [cateId, setCateId] = useState(Number(result.get("cid")));
-
-  useEffect(() => {
-    setCateId(Number(result.get("cid")));
-    if (Number(result.get("cid"))) {
-      let arr = [];
-      arr.push(Number(result.get("cid")));
-      setCategoryIds(arr);
-    }
-  }, [result.get("cid")]);
 
   // 加载Image列表
   useEffect(() => {
     getImageList();
-  }, [category_ids, refresh, page, size]);
+  }, [refresh, page, size]);
 
   // DeleteImage
   const removeResource = () => {
@@ -91,9 +73,8 @@ const ResourceImagesPage = () => {
   // 获取Image列表
   const getImageList = () => {
     setLoading(true);
-    let categoryIds = category_ids.join(",");
     resource
-      .resourceList(page, size, "", "", "", "IMAGE", categoryIds)
+      .resourceList(page, size, "", "", "", "IMAGE")
       .then((res: any) => {
         setTotal(res.data.result.total);
         setImageList(res.data.result.data);
@@ -162,32 +143,15 @@ const ResourceImagesPage = () => {
   return (
     <>
       <div className="tree-main-body">
-        <div className="left-box">
-          <TreeCategory
-            selected={category_ids}
-            type="no-cate"
-            text={"Image"}
-            onUpdate={(keys: any, title: any) => {
-              setPage(1);
-              setCategoryIds(keys);
-              if (typeof title === "string") {
-                setLabel(title);
-              } else {
-                setLabel(title.props.children[0]);
-              }
-            }}
-          />
-        </div>
-        <div className="right-box">
+        <div className="right-box" style={{ width: "100%" }}>
           <div className="d-flex learnhub-main-title float-left mb-24">
-            Image | {selLabel}
+            Image
           </div>
           <Row gutter={16} style={{ marginBottom: 24 }}>
             <Col span={24}>
               <div className="j-b-flex">
                 <div className="d-flex">
                   <UploadImageSub
-                    categoryIds={category_ids}
                     onUpdate={() => {
                       resetImageList();
                     }}

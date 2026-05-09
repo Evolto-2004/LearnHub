@@ -39,7 +39,7 @@ public class LoginController {
 
     @Autowired private RateLimiterService rateLimiterService;
 
-    @Autowired private LearnHubConfig playEduConfig;
+    @Autowired private LearnHubConfig learnHubConfig;
 
     @PostMapping("/login")
     @Log(title = "管理员-登录", businessType = BusinessTypeConstant.LOGIN)
@@ -51,7 +51,7 @@ public class LoginController {
 
         String limitKey = "admin-login-limit:" + loginRequest.getEmail();
         Long reqCount = rateLimiterService.current(limitKey, 3600L);
-        if (reqCount > 10 && !playEduConfig.getTesting()) {
+        if (reqCount > 10 && !learnHubConfig.getTesting()) {
             Long exp = MemoryCacheUtil.ttlWithoutPrefix(limitKey);
             return JsonResponse.error(
                     String.format("您的账号已被锁定，请%s后重试", exp > 60 ? exp / 60 + "分钟" : exp + "秒"));

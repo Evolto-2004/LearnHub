@@ -4,7 +4,6 @@ const TestPage = () => {
   return (
     <div>
       <UploadVideoButton
-        categoryIds={[]}
         onUpdate={() => {
           console.log(123);
         }}

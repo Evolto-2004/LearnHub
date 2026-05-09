@@ -3,7 +3,6 @@ import { Row, Col, Empty, Table, Spin, Typography, Input, Button } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { resource } from "../../api";
 import styles from "./index.module.less";
-import { TreeCategory } from "../../compenents";
 
 interface VideoItem {
   id: number;
@@ -38,7 +37,6 @@ interface PropsInterface {
 
 export const UploadCoursewareSub = (props: PropsInterface) => {
   const [init, setInit] = useState(true);
-  const [category_ids, setCategoryIds] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [videoList, setVideoList] = useState<VideoItem[]>([]);
   const [existingTypes, setExistingTypes] = useState<any>([]);
@@ -53,7 +51,7 @@ export const UploadCoursewareSub = (props: PropsInterface) => {
   useEffect(() => {
     setInit(true);
     getvideoList();
-  }, [props.open, category_ids, refresh, page, size]);
+  }, [props.open, refresh, page, size]);
 
   useEffect(() => {
     if (props.defaultCheckedList.length > 0) {
@@ -64,17 +62,8 @@ export const UploadCoursewareSub = (props: PropsInterface) => {
   // 获取列表
   const getvideoList = () => {
     setLoading(true);
-    let categoryIds = category_ids.join(",");
     resource
-      .resourceList(
-        page,
-        size,
-        "",
-        "",
-        title,
-        "WORD,EXCEL,PPT,PDF,TXT,RAR,ZIP",
-        categoryIds
-      )
+      .resourceList(page, size, "", "", title, "WORD,EXCEL,PPT,PDF,TXT,RAR,ZIP")
       .then((res: any) => {
         setTotal(res.data.result.total);
         setExistingTypes(res.data.existing_types);
@@ -160,26 +149,8 @@ export const UploadCoursewareSub = (props: PropsInterface) => {
   return (
     <>
       <Row style={{ width: 752, minHeight: 520 }}>
-        <Col span={7}>
-          {init && (
-            <div className="float-left text-center mt-30">
-              <Spin></Spin>
-            </div>
-          )}
-          <div
-            className="float-left"
-            style={{ display: init ? "none" : "block" }}
-          >
-            <TreeCategory
-              selected={[]}
-              type="no-cate"
-              text={props.label}
-              onUpdate={(keys: any) => setCategoryIds(keys)}
-            />
-          </div>
-        </Col>
-        <Col span={17}>
-          <Row style={{ marginBottom: 24, paddingLeft: 10 }}>
+        <Col span={24}>
+          <Row style={{ marginBottom: 24 }}>
             <div className="float-left  j-b-flex">
               <div className="d-flex"></div>
               <div className="d-flex">

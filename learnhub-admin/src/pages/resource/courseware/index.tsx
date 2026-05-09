@@ -10,11 +10,10 @@ import {
   Button,
 } from "antd";
 import { resource } from "../../../api";
-import { useLocation } from "react-router-dom";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { dateFormat, translateAdminIdentity } from "../../../utils/index";
-import { TreeCategory, UploadCoursewareButton } from "../../../compenents";
+import { UploadCoursewareButton } from "../../../compenents";
 import { CoursewareUpdateDialog } from "./compenents/update-dialog";
 
 const { confirm } = Modal;
@@ -39,7 +38,6 @@ type AdminUsersModel = {
 };
 
 const ResourceCoursewarePage = () => {
-  const result = new URLSearchParams(useLocation().search);
   const [list, setList] = useState<DataType[]>([]);
   const [adminUsers, setAdminUsers] = useState<AdminUsersModel>({});
   const [existingTypes, setExistingTypes] = useState<string[]>([]);
@@ -49,15 +47,10 @@ const ResourceCoursewarePage = () => {
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [category_ids, setCategoryIds] = useState<number[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any>([]);
   const [type, setType] = useState("WORD,EXCEL,PPT,PDF,TXT,RAR,ZIP");
   const [title, setTitle] = useState("");
   const [multiConfig, setMultiConfig] = useState(false);
-  const [selLabel, setLabel] = useState<string>(
-    result.get("label") ? String(result.get("label")) : "All Courseware"
-  );
-  const [cateId, setCateId] = useState(Number(result.get("cid")));
   const [updateId, setUpdateId] = useState(0);
   const [updateVisible, setUpdateVisible] = useState(false);
   const types = [
@@ -71,25 +64,15 @@ const ResourceCoursewarePage = () => {
     { label: "ZIP", value: "ZIP" },
   ];
 
-  useEffect(() => {
-    setCateId(Number(result.get("cid")));
-    if (Number(result.get("cid"))) {
-      let arr = [];
-      arr.push(Number(result.get("cid")));
-      setCategoryIds(arr);
-    }
-  }, [result.get("cid")]);
-
   // 加载Courseware列表
   useEffect(() => {
     getList();
-  }, [category_ids, refresh, page, size]);
+  }, [refresh, page, size]);
 
   const getList = () => {
     setLoading(true);
-    let categoryIds = category_ids.join(",");
     resource
-      .resourceList(page, size, "", "", title, type, categoryIds)
+      .resourceList(page, size, "", "", title, type)
       .then((res: any) => {
         setTotal(res.data.result.total);
         setList(res.data.result.data);
@@ -286,30 +269,13 @@ const ResourceCoursewarePage = () => {
   return (
     <>
       <div className="tree-main-body">
-        <div className="left-box">
-          <TreeCategory
-            selected={category_ids}
-            type="no-cate"
-            text={"Courseware"}
-            onUpdate={(keys: any, title: any) => {
-              setPage(1);
-              setCategoryIds(keys);
-              if (typeof title === "string") {
-                setLabel(title);
-              } else {
-                setLabel(title.props.children[0]);
-              }
-            }}
-          />
-        </div>
-        <div className="right-box">
+        <div className="right-box" style={{ width: "100%" }}>
           <div className="d-flex learnhub-main-title float-left mb-24">
-            Courseware | {selLabel}
+            Courseware
           </div>
           <div className="float-left  j-b-flex  mb-24">
             <div>
               <UploadCoursewareButton
-                categoryIds={category_ids}
                 onUpdate={() => {
                   resetList();
                 }}

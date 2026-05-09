@@ -20,7 +20,6 @@ export function minioPreSignUrl(
 export function minioMergeVideo(
   filename: string,
   uploadId: string,
-  categoryIds: string,
   originalFilename: string,
   extension: string,
   size: number,
@@ -31,7 +30,6 @@ export function minioMergeVideo(
     filename,
     upload_id: uploadId,
     original_filename: originalFilename,
-    category_ids: categoryIds,
     size,
     duration,
     extension,

@@ -21,7 +21,6 @@ import xyz.learnhub.common.constant.BPermissionConstant;
 import xyz.learnhub.common.constant.BusinessTypeConstant;
 import xyz.learnhub.common.context.BCtx;
 import xyz.learnhub.common.domain.AdminUser;
-import xyz.learnhub.common.domain.Category;
 import xyz.learnhub.common.domain.Department;
 import xyz.learnhub.common.exception.NotFoundException;
 import xyz.learnhub.common.service.*;
@@ -43,8 +42,6 @@ import xyz.learnhub.resource.service.ResourceService;
 public class CourseController {
 
     @Autowired private CourseService courseService;
-
-    @Autowired private CategoryService categoryService;
 
     @Autowired private CourseChapterService chapterService;
 
@@ -73,7 +70,6 @@ public class CourseController {
 
         String title = MapUtils.getString(params, "title");
         String depIds = MapUtils.getString(params, "dep_ids");
-        String categoryIds = MapUtils.getString(params, "category_ids");
         Integer isRequired = MapUtils.getInteger(params, "is_required");
 
         // 获取所有子部门
@@ -103,38 +99,10 @@ public class CourseController {
             alldepIds.addAll(alldepIdsSet);
         }
 
-        // 获取所有子类
-        Set<Integer> allCategoryIdsSet = new HashSet<>();
-        if (StringUtil.isNotEmpty(categoryIds)) {
-            String[] categoryIdArr = categoryIds.split(",");
-            if (StringUtil.isNotEmpty(categoryIdArr)) {
-                for (String categoryIdStr : categoryIdArr) {
-                    Integer categoryId = Integer.parseInt(categoryIdStr);
-                    allCategoryIdsSet.add(categoryId);
-                    // 查询所有的子分类
-                    List<Category> categoryList =
-                            categoryService.getChildCategorysByParentId(categoryId);
-                    if (StringUtil.isNotEmpty(categoryList)) {
-                        for (Category category : categoryList) {
-                            allCategoryIdsSet.add(category.getId());
-                        }
-                    }
-                }
-            }
-        }
-        List<Integer> allCategoryIds = new ArrayList<>();
-        if ("0".equals(categoryIds)) {
-            allCategoryIds.add(0);
-        }
-        if (StringUtil.isNotEmpty(allCategoryIdsSet)) {
-            allCategoryIds.addAll(allCategoryIdsSet);
-        }
-
         CoursePaginateFiler filter = new CoursePaginateFiler();
         filter.setTitle(title);
         filter.setSortField(sortField);
         filter.setSortAlgo(sortAlgo);
-        filter.setCategoryIds(allCategoryIds);
         filter.setDepIds(alldepIds);
         filter.setIsRequired(isRequired);
 
@@ -149,9 +117,7 @@ public class CourseController {
         data.put("total", result.getTotal());
 
         List<Integer> courseIds = result.getData().stream().map(Course::getId).toList();
-        data.put("course_category_ids", courseService.getCategoryIdsGroup(courseIds));
         data.put("course_dep_ids", courseService.getDepIdsGroup(courseIds));
-        data.put("categories", categoryService.id2name());
         data.put("departments", departmentService.id2name());
 
         // 操作人
@@ -177,9 +143,7 @@ public class CourseController {
     @BackendPermission(slug = BPermissionConstant.COURSE)
     @GetMapping("/create")
     public JsonResponse create() {
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("categories", categoryService.groupByParent());
-        return JsonResponse.data(data);
+        return JsonResponse.success();
     }
 
     @BackendPermission(slug = BPermissionConstant.COURSE)
@@ -191,13 +155,12 @@ public class CourseController {
             return JsonResponse.error("课程简短介绍不能超过200字");
         }
         Course course =
-                courseService.createWithCategoryIdsAndDepIds(
+                courseService.createWithDepIds(
                         req.getTitle(),
                         req.getThumb(),
                         req.getShortDesc(),
                         req.getIsRequired(),
                         req.getIsShow(),
-                        req.getCategoryIds(),
                         req.getDepIds(),
                         BCtx.getId());
 
@@ -312,7 +275,6 @@ public class CourseController {
         rids.add(course.getThumb());
 
         List<Integer> depIds = courseService.getDepIdsByCourseId(course.getId());
-        List<Integer> categoryIds = courseService.getCategoryIdsByCourseId(course.getId());
         List<CourseChapter> chapters = chapterService.getChaptersByCourseId(course.getId());
         List<CourseHour> hours = hourService.getHoursByCourseId(course.getId());
         List<CourseAttachment> attachments =
@@ -344,7 +306,6 @@ public class CourseController {
         HashMap<String, Object> data = new HashMap<>();
         data.put("course", course);
         data.put("dep_ids", depIds); // 已关联的部门
-        data.put("category_ids", categoryIds); // 已关联的分类
         data.put("chapters", chapters);
         data.put("hours", hours.stream().collect(Collectors.groupingBy(CourseHour::getChapterId)));
         data.put("attachments", attachments);
@@ -366,7 +327,7 @@ public class CourseController {
             return JsonResponse.error("无权限操作");
         }
 
-        courseService.updateWithCategoryIdsAndDepIds(
+        courseService.updateWithDepIds(
                 course,
                 req.getTitle(),
                 req.getThumb(),
@@ -374,7 +335,6 @@ public class CourseController {
                 req.getIsRequired(),
                 req.getIsShow(),
                 req.getSortAt(),
-                req.getCategoryIds(),
                 req.getDepIds());
 
         return JsonResponse.success();

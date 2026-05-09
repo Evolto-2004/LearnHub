@@ -16,12 +16,10 @@ import xyz.learnhub.common.constant.BackendConstant;
 import xyz.learnhub.common.constant.BusinessTypeConstant;
 import xyz.learnhub.common.context.BCtx;
 import xyz.learnhub.common.domain.AdminUser;
-import xyz.learnhub.common.domain.Category;
 import xyz.learnhub.common.exception.NotFoundException;
 import xyz.learnhub.common.exception.ServiceException;
 import xyz.learnhub.common.service.AdminUserService;
 import xyz.learnhub.common.service.AppConfigService;
-import xyz.learnhub.common.service.CategoryService;
 import xyz.learnhub.common.types.JsonResponse;
 import xyz.learnhub.common.types.paginate.PaginationResult;
 import xyz.learnhub.common.types.paginate.ResourcePaginateFilter;
@@ -46,8 +44,6 @@ public class ResourceController {
 
     @Autowired private BackendBus backendBus;
 
-    @Autowired private CategoryService categoryService;
-
     @GetMapping("/index")
     @Log(title = "资源-列表", businessType = BusinessTypeConstant.GET)
     public JsonResponse index(@RequestParam HashMap<String, Object> params) {
@@ -57,45 +53,15 @@ public class ResourceController {
         String sortAlgo = MapUtils.getString(params, "sort_algo");
         String name = MapUtils.getString(params, "name");
         String type = MapUtils.getString(params, "type");
-        String categoryIds = MapUtils.getString(params, "category_ids");
 
         if (type == null || type.trim().isEmpty()) {
             return JsonResponse.error("请选择资源类型");
-        }
-
-        // 获取所有子类
-        Set<Integer> allCategoryIdsSet = new HashSet<>();
-        if (StringUtil.isNotEmpty(categoryIds)) {
-            String[] categoryIdArr = categoryIds.split(",");
-            if (StringUtil.isNotEmpty(categoryIdArr)) {
-                for (String categoryIdStr : categoryIdArr) {
-                    Integer categoryId = Integer.parseInt(categoryIdStr);
-                    allCategoryIdsSet.add(categoryId);
-                    // 查询所有的子分类
-                    List<Category> categoryList =
-                            categoryService.getChildCategorysByParentId(categoryId);
-                    if (StringUtil.isNotEmpty(categoryList)) {
-                        for (Category category : categoryList) {
-                            allCategoryIdsSet.add(category.getId());
-                        }
-                    }
-                }
-            }
-        }
-
-        List<Integer> allCategoryIds = new ArrayList<>();
-        if ("0".equals(categoryIds)) {
-            allCategoryIds.add(0);
-        }
-        if (StringUtil.isNotEmpty(allCategoryIdsSet)) {
-            allCategoryIds.addAll(allCategoryIdsSet);
         }
 
         ResourcePaginateFilter filter = new ResourcePaginateFilter();
         filter.setSortAlgo(sortAlgo);
         filter.setSortField(sortField);
         filter.setType(type);
-        filter.setCategoryIds(allCategoryIds);
         filter.setName(name);
 
         if (!backendBus.isSuperAdmin()) { // 非超管只能读取它自己上传的资源
@@ -214,7 +180,6 @@ public class ResourceController {
 
         HashMap<String, Object> data = new HashMap<>();
         data.put("resources", resource);
-        data.put("category_ids", resourceService.categoryIds(id));
         // 获取资源签名url
         data.put(
                 "resource_url",
@@ -241,8 +206,7 @@ public class ResourceController {
             }
         }
 
-        resourceService.updateNameAndCategoryId(
-                resource.getId(), req.getName(), req.getCategoryId());
+        resourceService.updateName(resource.getId(), req.getName());
         return JsonResponse.success();
     }
 }

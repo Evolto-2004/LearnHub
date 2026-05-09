@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form, Input, message, TreeSelect, Spin } from "antd";
-import { resource, resourceCategory } from "../../../../../api/index";
+import { Modal, Form, Input, message, Spin } from "antd";
+import { resource } from "../../../../../api/index";
 
 interface PropInterface {
   id: number;
   open: boolean;
   onCancel: () => void;
   onSuccess: () => void;
-}
-
-interface Option {
-  value: string | number;
-  title: string;
-  children?: Option[];
 }
 
 export const VideosUpdateDialog: React.FC<PropInterface> = ({
@@ -22,9 +16,7 @@ export const VideosUpdateDialog: React.FC<PropInterface> = ({
   onSuccess,
 }) => {
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(true);
   const [init, setInit] = useState(true);
-  const [categories, setCategories] = useState<Option[]>([]);
 
   useEffect(() => {
     setInit(true);
@@ -32,64 +24,21 @@ export const VideosUpdateDialog: React.FC<PropInterface> = ({
       return;
     }
     if (open) {
-      getCategory();
       getDetail();
     }
   }, [form, id, open]);
-
-  const getCategory = () => {
-    resourceCategory.resourceCategoryList().then((res: any) => {
-      const categories: CategoriesBoxModel = res.data.categories;
-      if (JSON.stringify(categories) !== "{}") {
-        const new_arr: any = checkArr(categories, 0, null);
-        setCategories(new_arr);
-      }
-    });
-  };
 
   const getDetail = () => {
     resource.videoDetail(id).then((res: any) => {
       let data = res.data.resources;
       form.setFieldsValue({
         name: data.name,
-        category_id: res.data.category_ids,
       });
       setInit(false);
     });
   };
 
-  const checkArr = (
-    departments: CategoriesBoxModel,
-    id: number,
-    counts: any
-  ) => {
-    const arr = [];
-    for (let i = 0; i < departments[id].length; i++) {
-      if (!departments[departments[id][i].id]) {
-        arr.push({
-          title: departments[id][i].name,
-          value: departments[id][i].id,
-        });
-      } else {
-        const new_arr: any = checkArr(
-          departments,
-          departments[id][i].id,
-          counts
-        );
-        arr.push({
-          title: departments[id][i].name,
-          value: departments[id][i].id,
-          children: new_arr,
-        });
-      }
-    }
-    return arr;
-  };
-
   const onFinish = (values: any) => {
-    if (Array.isArray(values.category_id)) {
-      values.category_id = values.category_id[0];
-    }
     resource.videoUpdate(id, values).then((res: any) => {
       message.success("Saved successfully!");
       onSuccess();
@@ -132,20 +81,6 @@ export const VideosUpdateDialog: React.FC<PropInterface> = ({
               onFinishFailed={onFinishFailed}
               autoComplete="off"
             >
-              <Form.Item
-                label="Video Category"
-                name="category_id"
-                rules={[{ required: true, message: "Please select a video category!" }]}
-              >
-                <TreeSelect
-                  showCheckedStrategy={TreeSelect.SHOW_ALL}
-                  allowClear
-                  style={{ width: 200 }}
-                  treeData={categories}
-                  placeholder="Video Category"
-                  treeDefaultExpandAll
-                />
-              </Form.Item>
               <Form.Item
                 label="Video Title"
                 name="name"

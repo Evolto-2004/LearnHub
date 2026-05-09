@@ -12,12 +12,12 @@ public class LoginLimitCache {
 
     @Autowired private RateLimiterService rateLimiterService;
 
-    @Autowired private LearnHubConfig playEduConfig;
+    @Autowired private LearnHubConfig learnHubConfig;
 
     public void check(String email) throws ServiceException {
         String limitKey = cacheKey(email);
         Long reqCount = rateLimiterService.current(limitKey, 600L);
-        if (reqCount >= 10 && !playEduConfig.getTesting()) {
+        if (reqCount >= 10 && !learnHubConfig.getTesting()) {
             Long exp = MemoryCacheUtil.ttlWithoutPrefix(limitKey);
             String msg = String.format("您的账号已被锁定，请%s后重试", exp > 60 ? exp / 60 + "分钟" : exp + "秒");
             throw new ServiceException(msg);

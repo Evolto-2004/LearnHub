@@ -35,10 +35,6 @@ public class CourseRequest {
     @JsonProperty("dep_ids")
     private Integer[] depIds;
 
-    @NotNull(message = "category_ids参数不存在")
-    @JsonProperty("category_ids")
-    private Integer[] categoryIds;
-
     @JsonProperty("sort_at")
     private String sortAt;
 
