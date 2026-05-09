@@ -3,7 +3,6 @@ import moment from "moment";
 const translatedPhrases: Record<string, string> = {
   "超级管理员": "Super Admin",
   "主面板": "Dashboard",
-  "管理员日志-列表": "Admin Logs - List",
   "管理员角色-列表": "Admin Roles - List",
   "管理员角色-新建": "Admin Roles - Create",
   "管理员角色-编辑": "Admin Roles - Edit",
@@ -17,7 +16,6 @@ const translatedPhrases: Record<string, string> = {
 };
 
 const translatedSegments: Record<string, string> = {
-  "管理员日志": "Admin Logs",
   "管理员角色": "Admin Roles",
   "系统配置": "System Configuration",
   "线上课": "Courses",

@@ -8,10 +8,13 @@ import org.springframework.stereotype.Component;
 import xyz.learnhub.common.constant.BPermissionConstant;
 import xyz.learnhub.common.domain.AdminPermission;
 import xyz.learnhub.common.service.AdminPermissionService;
+import xyz.learnhub.common.service.AdminRolePermissionService;
 
 @Order(1020)
 @Component
 public class AdminPermissionCheck implements CommandLineRunner {
+
+    private static final String REMOVED_ADMIN_LOG_PERMISSION_SLUG = "admin-log";
 
     private final Map<String, Map<String, AdminPermission[]>> permissions =
             new HashMap<>() {
@@ -157,13 +160,6 @@ public class AdminPermissionCheck implements CommandLineRunner {
                                                 },
                                                 new AdminPermission() {
                                                     {
-                                                        setSort(10);
-                                                        setName("管理员日志");
-                                                        setSlug(BPermissionConstant.ADMIN_LOG);
-                                                    }
-                                                },
-                                                new AdminPermission() {
-                                                    {
                                                         setSort(15);
                                                         setName("管理员角色");
                                                         setSlug(BPermissionConstant.ADMIN_ROLE);
@@ -243,8 +239,12 @@ public class AdminPermissionCheck implements CommandLineRunner {
 
     @Autowired private AdminPermissionService permissionService;
 
+    @Autowired private AdminRolePermissionService rolePermissionService;
+
     @Override
     public void run(String... args) throws Exception {
+        removeRemovedPermissions();
+
         HashMap<String, Integer> slugs = permissionService.allSlugs();
         List<AdminPermission> list = new ArrayList<>();
         Date now = new Date();
@@ -281,6 +281,20 @@ public class AdminPermissionCheck implements CommandLineRunner {
 
         if (!list.isEmpty()) {
             permissionService.saveBatch(list);
+        }
+    }
+
+    private void removeRemovedPermissions() {
+        List<AdminPermission> removedPermissions =
+                permissionService.list(
+                        permissionService
+                                .query()
+                                .getWrapper()
+                                .eq("slug", REMOVED_ADMIN_LOG_PERMISSION_SLUG));
+        for (AdminPermission permission : removedPermissions) {
+            rolePermissionService.remove(
+                    rolePermissionService.query().getWrapper().eq("perm_id", permission.getId()));
+            permissionService.removeById(permission.getId());
         }
     }
 }

@@ -83,7 +83,6 @@ const items = [
         null,
         "admin-user-index"
       ),
-      getItem("Admin Logs", "/system/adminlog", null, null, null, "admin-log"),
     ],
     null,
     null

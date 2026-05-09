@@ -34,7 +34,6 @@ const SystemAdministratorPage = lazy(
   () => import("../pages/system/administrator")
 );
 const SystemAdminrolesPage = lazy(() => import("../pages/system/adminroles"));
-const SystemLogPage = lazy(() => import("../pages/system/adminlog"));
 //Department页面
 const DepartmentPage = lazy(() => import("../pages/department"));
 //测试
@@ -117,10 +116,6 @@ const routes: RouteObject[] = [
           {
             path: "/system/adminroles",
             element: <PrivateRoute Component={<SystemAdminrolesPage />} />,
-          },
-          {
-            path: "/system/adminlog",
-            element: <PrivateRoute Component={<SystemLogPage />} />,
           },
           {
             path: "/department",
