@@ -145,7 +145,9 @@ const IndexPage = () => {
               <img className={styles["icon"]} src={myLesoon} />
               <span>Course Progress</span>
             </div>
-            <div className={styles["info"]}>
+            <div
+              className={`${styles["info"]} ${styles["course-progress-info"]}`}
+            >
               <div className={styles["info-item"]}>
                 <span>Required: Completed courses</span>
                 <strong> {stats?.required_finished_course_count || 0} </strong>

@@ -56,6 +56,17 @@
         }
       }
     }
+    .course-progress-info {
+      gap: 32px;
+      justify-content: space-between;
+      .info-item {
+        display: inline-flex;
+        align-items: baseline;
+        flex: 0 0 auto;
+        margin-right: 0;
+        white-space: nowrap;
+      }
+    }
   }
 }
 .tabs {

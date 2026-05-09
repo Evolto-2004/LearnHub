@@ -277,26 +277,51 @@ public class UserController {
 
     @GetMapping("/latest-learn")
     public JsonResponse latestLearn() {
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("user_latest_learns", new ArrayList<>());
+        data.put("resource_url", new HashMap<>());
+
         // 读取当前学员最近100条学习的线上课
         List<UserCourseHourRecord> userCourseHourRecords =
                 userCourseHourRecordService.getLatestCourseIds(FCtx.getId(), 100);
         if (userCourseHourRecords == null || userCourseHourRecords.isEmpty()) {
-            return JsonResponse.data(new ArrayList<>());
+            return JsonResponse.data(data);
         }
 
         List<Integer> courseIds =
-                userCourseHourRecords.stream().map(UserCourseHourRecord::getCourseId).toList();
+                userCourseHourRecords.stream()
+                        .map(UserCourseHourRecord::getCourseId)
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .toList();
         List<Integer> hourIds =
-                userCourseHourRecords.stream().map(UserCourseHourRecord::getHourId).toList();
+                userCourseHourRecords.stream()
+                        .map(UserCourseHourRecord::getHourId)
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .toList();
+        if (courseIds.isEmpty()) {
+            return JsonResponse.data(data);
+        }
+
         Map<Integer, UserCourseHourRecord> hour2Record =
                 userCourseHourRecords.stream()
-                        .collect(Collectors.toMap(UserCourseHourRecord::getHourId, e -> e));
+                        .filter(e -> e.getHourId() != null)
+                        .collect(
+                                Collectors.toMap(
+                                        UserCourseHourRecord::getHourId,
+                                        e -> e,
+                                        (existing, replacement) -> existing,
+                                        LinkedHashMap::new));
         Map<Integer, Integer> course2hour =
                 userCourseHourRecords.stream()
+                        .filter(e -> e.getCourseId() != null && e.getHourId() != null)
                         .collect(
                                 Collectors.toMap(
                                         UserCourseHourRecord::getCourseId,
-                                        UserCourseHourRecord::getHourId));
+                                        UserCourseHourRecord::getHourId,
+                                        (existing, replacement) -> existing,
+                                        LinkedHashMap::new));
 
         // 线上课
         Map<Integer, Course> courses =
@@ -314,27 +339,41 @@ public class UserController {
                                     }
                                 })
                         .stream()
-                        .collect(Collectors.toMap(Course::getId, e -> e));
+                        .collect(
+                                Collectors.toMap(
+                                        Course::getId, e -> e, (existing, replacement) -> existing));
 
         // 线上课课时
         Map<Integer, CourseHour> hours =
                 hourService.chunk(hourIds).stream()
-                        .collect(Collectors.toMap(CourseHour::getId, e -> e));
+                        .collect(
+                                Collectors.toMap(
+                                        CourseHour::getId,
+                                        e -> e,
+                                        (existing, replacement) -> existing));
 
         // 获取学员的线上课进度
         Map<Integer, UserCourseRecord> records =
                 userCourseRecordService.chunk(FCtx.getId(), courseIds).stream()
-                        .collect(Collectors.toMap(UserCourseRecord::getCourseId, e -> e));
+                        .collect(
+                                Collectors.toMap(
+                                        UserCourseRecord::getCourseId,
+                                        e -> e,
+                                        (existing, replacement) -> existing));
         List<UserLatestLearn> userLatestLearns = new ArrayList<>();
         List<Integer> rids = new ArrayList<>();
         for (Integer courseId : courseIds) {
             UserCourseRecord record = records.get(courseId); // 线上课学习进度
             Course tmpCourse = courses.get(courseId); // 线上课
+            if (StringUtil.isNull(tmpCourse)) {
+                continue;
+            }
+
             Integer tmpHourId = course2hour.get(courseId); // 最近学习的课时id
             UserCourseHourRecord tmpUserCourseHourRecord = hour2Record.get(tmpHourId); // 课时学习进度
             CourseHour tmpHour = hours.get(tmpHourId); // 课时
 
-            if (StringUtil.isNotNull(tmpCourse)) {
+            if (tmpCourse.getThumb() != null) {
                 rids.add(tmpCourse.getThumb());
             }
 
@@ -349,7 +388,6 @@ public class UserController {
                     });
         }
 
-        HashMap<String, Object> data = new HashMap<>();
         data.put("user_latest_learns", userLatestLearns);
         // 获取签名url
         data.put("resource_url", resourceService.chunksPreSignUrlByIds(rids));

@@ -56,13 +56,22 @@ const LatestLearnPage = () => {
 
   const getCourses = () => {
     setLoading(true);
-    course.latestLearn().then((res: any) => {
-      if (res.data.resource_url && res.data.user_latest_learns) {
-        setResourceUrl(res.data.resource_url);
-        setCourses(res.data.user_latest_learns);
-      }
-      setLoading(false);
-    });
+    course
+      .latestLearn()
+      .then((res: any) => {
+        const data = res.data || {};
+        setResourceUrl(data.resource_url || {});
+        setCourses(
+          Array.isArray(data.user_latest_learns) ? data.user_latest_learns : []
+        );
+      })
+      .catch(() => {
+        setResourceUrl({});
+        setCourses([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
