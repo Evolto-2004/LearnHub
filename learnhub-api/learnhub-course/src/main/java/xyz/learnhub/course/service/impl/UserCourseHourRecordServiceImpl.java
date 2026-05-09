@@ -42,14 +42,17 @@ public class UserCourseHourRecordServiceImpl
             Integer totalDuration) {
         UserCourseHourRecord record = find(userId, courseId, hourId);
 
-        // 记录存在 && 已看完 => 跳过处理
-        if (record != null && record.getIsFinished() == 1) {
-            return false;
-        }
-
         // 是否看完
-        boolean isFinished = duration >= totalDuration;
-        Date finishedAt = isFinished ? new Date() : null;
+        boolean isFinished =
+                totalDuration != null && totalDuration > 0 && duration >= totalDuration;
+        boolean wasFinished =
+                record != null && record.getIsFinished() != null && record.getIsFinished() == 1;
+        Integer savedDuration =
+                record == null || record.getFinishedDuration() == null
+                        ? 0
+                        : record.getFinishedDuration();
+        Date now = new Date();
+        Date finishedAt = isFinished ? now : null;
 
         if (record == null) {
             UserCourseHourRecord insertRecord = new UserCourseHourRecord();
@@ -60,21 +63,27 @@ public class UserCourseHourRecordServiceImpl
             insertRecord.setFinishedDuration(duration);
             insertRecord.setIsFinished(isFinished ? 1 : 0);
             insertRecord.setFinishedAt(finishedAt);
-            insertRecord.setCreatedAt(new Date());
-            insertRecord.setUpdatedAt(new Date());
+            insertRecord.setCreatedAt(now);
+            insertRecord.setUpdatedAt(now);
 
             save(insertRecord);
-        } else if (record.getFinishedDuration() < duration) {
+        } else if (!wasFinished && (savedDuration < duration || isFinished)) {
             UserCourseHourRecord updateRecord = new UserCourseHourRecord();
             updateRecord.setId(record.getId());
             updateRecord.setTotalDuration(totalDuration);
-            updateRecord.setFinishedDuration(duration);
+            updateRecord.setFinishedDuration(Math.max(savedDuration, duration));
             updateRecord.setIsFinished(isFinished ? 1 : 0);
             updateRecord.setFinishedAt(finishedAt);
+            updateRecord.setUpdatedAt(now);
 
             updateById(updateRecord);
+        } else {
+            UserCourseHourRecord updateRecord = new UserCourseHourRecord();
+            updateRecord.setId(record.getId());
+            updateRecord.setUpdatedAt(now);
+            updateById(updateRecord);
         }
-        return isFinished;
+        return !wasFinished && isFinished;
     }
 
     @Override

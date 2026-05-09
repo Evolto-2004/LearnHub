@@ -31,10 +31,21 @@ const CoursePalyPage = () => {
   const playRef = useRef(0);
   const watchRef = useRef(0);
   const totalRef = useRef(0);
+  const recordStartRef = useRef(false);
   const [checkPlayerStatus, setCheckPlayerStatus] = useState(false);
 
   useEffect(() => {
     timer && clearInterval(timer);
+    recordStartRef.current = false;
+    myRef.current = 0;
+    playRef.current = 0;
+    watchRef.current = 0;
+    setPlayDuration(0);
+    setPlayingTime(0);
+    setWatchedSeconds(0);
+    setPlayendedStatus(false);
+    setIsLastpage(false);
+    setLastSeeValue({});
     getCourse();
     getDetail();
     return () => {
@@ -125,7 +136,11 @@ const CoursePalyPage = () => {
     );
   };
 
-  const initDPlayer = (playUrl: string, isTrySee: number, params: any) => {
+  const initDPlayer = (
+    playUrl: string,
+    isTrySee: number,
+    lastSeeParams: any
+  ) => {
     let banDrag =
       systemConfig.playerIsDisabledDrag &&
       watchRef.current < totalRef.current &&
@@ -149,7 +164,19 @@ const CoursePalyPage = () => {
         opacity: Number(systemConfig.playerBulletSecretOpacity),
       },
       ban_drag: banDrag,
-      last_see_pos: params,
+      last_see_pos: lastSeeParams,
+    });
+    window.player.on("play", () => {
+      if (recordStartRef.current) {
+        return;
+      }
+      recordStartRef.current = true;
+      const currentTime = parseInt(window.player.video.currentTime) || 0;
+      Course.record(
+        Number(params.courseId),
+        Number(params.hourId),
+        Math.max(0, currentTime)
+      ).then((res: any) => {});
     });
     // 监听播放Progress更新evt
     window.player.on("timeupdate", () => {

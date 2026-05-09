@@ -104,7 +104,7 @@ public class HourController {
             @PathVariable(name = "id") Integer id,
             @RequestBody @Validated CourseHourRecordRequest req) {
         Integer duration = req.getDuration();
-        if (duration <= 0) {
+        if (duration < 0) {
             return JsonResponse.error("duration参数错误");
         }
 
