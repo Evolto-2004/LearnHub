@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.learnhub.common.annotation.Log;
-import xyz.learnhub.common.constant.BackendConstant;
 import xyz.learnhub.common.constant.BusinessTypeConstant;
 import xyz.learnhub.common.constant.SystemConstant;
 import xyz.learnhub.common.domain.User;
@@ -19,7 +18,6 @@ import xyz.learnhub.common.types.JsonResponse;
 import xyz.learnhub.course.domain.UserLearnDurationStats;
 import xyz.learnhub.course.service.CourseService;
 import xyz.learnhub.course.service.UserLearnDurationStatsService;
-import xyz.learnhub.resource.service.ResourceService;
 
 /**
  *
@@ -37,8 +35,6 @@ public class DashboardController {
 
     @Autowired private DepartmentService departmentService;
 
-    @Autowired private ResourceService resourceService;
-
     @Autowired private UserLearnDurationStatsService userLearnDurationStatsService;
 
     @GetMapping("/index")
@@ -55,21 +51,6 @@ public class DashboardController {
 
         data.put("department_total", departmentService.total());
         data.put("admin_user_total", adminUserService.total());
-
-        data.put(
-                "resource_video_total", resourceService.total(BackendConstant.RESOURCE_TYPE_VIDEO));
-        data.put(
-                "resource_image_total", resourceService.total(BackendConstant.RESOURCE_TYPE_IMAGE));
-
-        List<String> types = new ArrayList<>();
-        types.add(BackendConstant.RESOURCE_TYPE_PDF);
-        types.add(BackendConstant.RESOURCE_TYPE_WORD);
-        types.add(BackendConstant.RESOURCE_TYPE_PPT);
-        types.add(BackendConstant.RESOURCE_TYPE_EXCEL);
-        types.add(BackendConstant.RESOURCE_TYPE_ZIP);
-        types.add(BackendConstant.RESOURCE_TYPE_RAR);
-        types.add(BackendConstant.RESOURCE_TYPE_TXT);
-        data.put("resource_file_total", resourceService.total(types));
 
         data.put("user_learn_today", userLearnDurationStatsService.todayTotal());
         data.put("user_learn_yesterday", userLearnDurationStatsService.yesterdayTotal());

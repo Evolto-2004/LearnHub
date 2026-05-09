@@ -1,24 +1,18 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import styles from "./index.module.less";
 import { Row, Col } from "antd";
-import { Link, useNavigate } from "react-router-dom";
-import banner from "../../assets/images/dashboard/img-a1.png";
-import icon from "../../assets/images/dashboard/icon-more.png";
+import { useNavigate } from "react-router-dom";
 import iconN1 from "../../assets/images/dashboard/icon-n1.png";
 import iconN2 from "../../assets/images/dashboard/icon-n2.png";
 import iconN3 from "../../assets/images/dashboard/icon-n3.png";
 import { Footer } from "../../compenents/footer";
 import { dashboard } from "../../api/index";
 import { timeFormat } from "../../utils/index";
-import * as echarts from "echarts";
 
 type BasicDataModel = {
   admin_user_total: number;
   course_total: number;
   department_total: number;
-  resource_file_total: number;
-  resource_image_total: number;
-  resource_video_total: number;
   user_learn_today: number;
   user_learn_top10?: Top10Model[];
   user_learn_top10_users?: Top10UserModel;
@@ -41,156 +35,18 @@ type Top10UserModel = {
 };
 
 const DashboardPage = () => {
-  let chartRef = useRef(null);
   const navigate = useNavigate();
   const [basicData, setBasicData] = useState<BasicDataModel | null>(null);
 
   const getData = () => {
     dashboard.dashboardList().then((res: any) => {
       setBasicData(res.data);
-      renderPieView({
-        videos_count: res.data.resource_video_total,
-        images_count: res.data.resource_image_total,
-        courseware_count: res.data.resource_file_total,
-      });
-      return () => {
-        window.onresize = null;
-      };
     });
   };
 
   useEffect(() => {
     getData();
   }, []);
-
-  const renderPieView = (params: any) => {
-    let num =
-      params.videos_count + params.images_count + params.courseware_count;
-    let showAllLabels = num === 0;
-    let data = [
-      {
-        name: "Videos",
-        value: params.videos_count,
-      },
-      {
-        name: "Images",
-        value: params.images_count,
-      },
-      {
-        name: "Courseware",
-        value: params.courseware_count,
-      },
-    ].map((item) => {
-      let showLabel = showAllLabels || item.value !== 0;
-      return {
-        ...item,
-        label: {
-          show: showLabel,
-        },
-        labelLine: {
-          show: showLabel,
-        },
-      };
-    });
-    let dom: any = chartRef.current;
-    let myChart = echarts.init(dom);
-    myChart.setOption({
-      title: {
-        left: "50%",
-        top: "31%",
-        textAlign: "center",
-        itemGap: 6,
-        text: num, //主标题
-        subtext: "Total Resources", //副标题
-        textStyle: {
-          //标题样式
-          fontSize: 24,
-          fontWeight: "bolder",
-          color: "#333",
-        },
-        subtextStyle: {
-          //副标题样式
-          fontSize: 14,
-          fontWeight: 500,
-          color: "rgba(0, 0, 0, 0.45)",
-          formatter: "",
-        },
-      },
-      legend: [
-        {
-          selectedMode: true, // 图例选择的模式，控制YesNo可以通过点击图例改变系列的显示状态。默认开启图例选择，可以设成 false 关闭。
-          bottom: "2%",
-          left: "center",
-          textStyle: {
-            // 图例的公用文本样式。
-            fontSize: 14,
-            color: " #333333",
-          },
-          data: ["Videos", "Images", "Courseware"],
-        },
-      ],
-      tooltip: {
-        trigger: "item",
-        formatter: " {b}: {c} ",
-      },
-      label: {
-        formatter: " {b}: {c} ",
-        rich: {
-          per: {
-            color: "#000",
-          },
-        },
-      },
-      series: [
-        {
-          type: "pie",
-          stillShowZeroSum: true,
-          radius: ["46%", "72%"], // 环比 圈的Size
-          center: ["50%", "40%"], // 图形在整个canvas中的位置
-          color: ["#2563EB", "#0EA5E9", "#16A34A"], // item的取色盘
-          avoidLabelOverlap: true,
-          itemStyle: {
-            borderColor: "#fff", // 白边
-            borderWidth: 2,
-          },
-          emphasis: {
-            // 高亮item的样式
-            disabled: true,
-          },
-          labelLayout: {
-            hideOverlap: true,
-            moveOverlap: "shiftY",
-          },
-          labelLine: {
-            show: true,
-            length: 10,
-            length2: 12,
-            maxSurfaceAngle: 80,
-          },
-          label: {
-            show: true,
-            color: "#4c4a4a",
-            formatter: "{active|{b}}\n\r{total|{c}}",
-            rich: {
-              total: {
-                fontSize: 14,
-                color: "#454c5c",
-              },
-              active: {
-                fontSize: 13,
-                color: "#6c7a89",
-                lineHeight: 24,
-              },
-            },
-          },
-          data: data,
-        },
-      ],
-    });
-    window.onresize = () => {
-      myChart.resize();
-    };
-  };
 
   const compareNum = (today: number, yesterday: number) => {
     let num = today - yesterday || 0;
@@ -570,30 +426,6 @@ const DashboardPage = () => {
                     {basicData?.admin_user_total}
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div className="learnhub-main-top mt-24">
-            <div className={styles["large-title"]}>Product Guide</div>
-            <div className={styles["usage-guide"]}>
-              <img className={styles["banner"]} src={banner} alt="" />
-              <Link
-                to="/system/config/index"
-                className={styles["link"]}
-              >
-                Go to System Configuration to complete setup
-                <img className={styles["icon"]} src={icon} alt="" />
-              </Link>
-            </div>
-          </div>
-          <div className={`learnhub-main-top mt-24 ${styles["resource-card"]}`}>
-            <div className={styles["large-title"]}>Resource Statistics</div>
-            <div className={styles["charts"]}>
-              <div className={styles["chart-wrap"]}>
-                <div
-                  ref={chartRef}
-                  style={{ width: "100%", height: "100%", position: "relative" }}
-                ></div>
               </div>
             </div>
           </div>
