@@ -30,12 +30,17 @@
       border-inline-end: none !important;
     }
 
-    :global(.ant-menu-item),
-    :global(.ant-menu-submenu-title) {
-      height: 44px;
-      line-height: 44px;
-      margin: 6px 12px;
-      width: calc(100% - 24px);
+    :global(.ant-menu-root > .ant-menu-submenu) {
+      margin: 0 !important;
+      width: 100% !important;
+    }
+
+    :global(.ant-menu-root > .ant-menu-item),
+    :global(.ant-menu-root > .ant-menu-submenu > .ant-menu-submenu-title) {
+      height: 44px !important;
+      line-height: 44px !important;
+      margin: 6px 12px !important;
+      width: calc(100% - 24px) !important;
       border-radius: 12px;
     }
 
