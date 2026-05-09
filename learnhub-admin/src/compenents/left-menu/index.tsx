@@ -90,7 +90,7 @@ const items = [
 ];
 
 export const LeftMenu: React.FC = () => {
-  const menuWidth = 240;
+  const menuWidth = 268;
   const location = useLocation();
   const navigate = useNavigate();
   const children2Parent: any = {

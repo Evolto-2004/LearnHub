@@ -23,41 +23,11 @@ public class AppConfigCheck implements CommandLineRunner {
                             new AppConfig[] {
                                 new AppConfig() {
                                     {
-                                        setName("网站名");
-                                        setSort(10);
-                                        setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_INPUT);
-                                        setKeyName(ConfigConstant.SYSTEM_NAME);
-                                        setKeyValue("");
-                                        setHelp("请输入网站名");
-                                    }
-                                },
-                                new AppConfig() {
-                                    {
                                         setName("Logo");
                                         setSort(20);
                                         setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_IMAGE);
                                         setKeyName(ConfigConstant.SYSTEM_LOGO);
                                         setKeyValue("");
-                                    }
-                                },
-                                new AppConfig() {
-                                    {
-                                        setName("PC端口访问地址");
-                                        setSort(40);
-                                        setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_INPUT);
-                                        setKeyName(ConfigConstant.SYSTEM_PC_URL);
-                                        setKeyValue("");
-                                        setHelp("请输入PC端访问地址");
-                                    }
-                                },
-                                new AppConfig() {
-                                    {
-                                        setName("网站页脚");
-                                        setSort(60);
-                                        setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_INPUT);
-                                        setKeyName("system.pc_index_footer_msg");
-                                        setKeyValue("");
-                                        setHelp("自定义一句话显示在前台页脚");
                                     }
                                 },
                             });
@@ -73,44 +43,6 @@ public class AppConfigCheck implements CommandLineRunner {
                                         setKeyName("player.poster");
                                         setKeyValue("");
                                         setHelp("播放器封面在学员观看视频时默认显示");
-                                    }
-                                },
-                                new AppConfig() {
-                                    {
-                                        setName("启用跑马灯");
-                                        setSort(20);
-                                        setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_SWITCH);
-                                        setKeyName("player.is_enabled_bullet_secret");
-                                        setKeyValue("0");
-                                        setHelp("开启之后视频播放器将会随机显示学员信息");
-                                    }
-                                },
-                                new AppConfig() {
-                                    {
-                                        setName("跑马灯内容");
-                                        setSort(30);
-                                        setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_TEXT);
-                                        setKeyName("player.bullet_secret_text");
-                                        setKeyValue("");
-                                        setHelp("请配置跑马灯显示的内容模板");
-                                    }
-                                },
-                                new AppConfig() {
-                                    {
-                                        setName("跑马灯颜色");
-                                        setSort(40);
-                                        setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_TEXT);
-                                        setKeyName("player.bullet_secret_color");
-                                        setKeyValue("");
-                                    }
-                                },
-                                new AppConfig() {
-                                    {
-                                        setName("跑马灯透明度");
-                                        setSort(50);
-                                        setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_TEXT);
-                                        setKeyName("player.bullet_secret_opacity");
-                                        setKeyValue("1");
                                     }
                                 },
                                 new AppConfig() {
@@ -145,7 +77,7 @@ public class AppConfigCheck implements CommandLineRunner {
                                         setSort(10);
                                         setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_TEXT);
                                         setKeyName(ConfigConstant.S3_ACCESS_KEY);
-                                        setKeyValue("");
+                                        setKeyValue("learnhub");
                                     }
                                 },
                                 new AppConfig() {
@@ -154,7 +86,7 @@ public class AppConfigCheck implements CommandLineRunner {
                                         setSort(20);
                                         setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_TEXT);
                                         setKeyName(ConfigConstant.S3_SECRET_KEY);
-                                        setKeyValue("");
+                                        setKeyValue("learnhub123456");
                                         setIsPrivate(1);
                                     }
                                 },
@@ -164,7 +96,7 @@ public class AppConfigCheck implements CommandLineRunner {
                                         setSort(30);
                                         setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_TEXT);
                                         setKeyName(ConfigConstant.S3_BUCKET);
-                                        setKeyValue("");
+                                        setKeyValue("learnhub");
                                     }
                                 },
                                 new AppConfig() {
@@ -173,7 +105,7 @@ public class AppConfigCheck implements CommandLineRunner {
                                         setSort(35);
                                         setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_TEXT);
                                         setKeyName(ConfigConstant.S3_REGION);
-                                        setKeyValue("");
+                                        setKeyValue("us-east-1");
                                     }
                                 },
                                 new AppConfig() {
@@ -182,7 +114,7 @@ public class AppConfigCheck implements CommandLineRunner {
                                         setSort(40);
                                         setFieldType(BackendConstant.APP_CONFIG_FIELD_TYPE_TEXT);
                                         setKeyName(ConfigConstant.S3_ENDPOINT);
-                                        setKeyValue("");
+                                        setKeyValue("http://minio.localhost:9000");
                                     }
                                 },
                             });
@@ -193,6 +125,12 @@ public class AppConfigCheck implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        configService.remove(
+                configService
+                        .query()
+                        .getWrapper()
+                        .in("key_name", ConfigConstant.REMOVED_CONFIG_KEYS));
+
         Map<String, Long> keys = configService.allKeys();
         List<AppConfig> list = new ArrayList<>();
         Date now = new Date();

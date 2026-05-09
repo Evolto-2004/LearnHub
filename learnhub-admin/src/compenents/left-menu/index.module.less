@@ -1,5 +1,5 @@
 .left-menu {
-  width: 240px;
+  width: 268px;
   height: 100%;
   background: #ffffff;
   color: #0f172a;
@@ -15,7 +15,7 @@
   }
 
   .menu-box {
-    width: 240px;
+    width: 268px;
     height: calc(100% - 74px);
     overflow-y: auto;
     overflow-x: hidden;
@@ -44,7 +44,17 @@
       border-radius: 12px;
     }
 
+    :global(.ant-menu-sub.ant-menu-inline > .ant-menu-item) {
+      height: 42px !important;
+      line-height: 42px !important;
+      margin: 4px 12px !important;
+      width: calc(100% - 24px) !important;
+      padding-left: 42px !important;
+      border-radius: 12px;
+    }
+
     :global(.ant-menu-title-content) {
+      min-width: 0;
       overflow: visible !important;
       text-overflow: unset !important;
       white-space: nowrap;

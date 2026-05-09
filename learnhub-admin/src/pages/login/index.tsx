@@ -60,9 +60,7 @@ const LoginPage = () => {
   const getSystemConfig = async () => {
     let res: any = await system.getSystemConfig();
     let data: SystemConfigStoreInterface = {
-      systemName: res.data["system.name"],
       systemLogo: res.data["system.logo"],
-      systemPcUrl: res.data["system.pc_url"],
       resourceUrl: res.data["resource_url"],
       memberDefaultAvatar: res.data["member.default_avatar"],
       courseDefaultThumbs: res.data["default.course_thumbs"],

@@ -35,9 +35,7 @@ public class SystemController {
 
         HashMap<String, Object> data = new HashMap<>();
 
-        data.put(ConfigConstant.SYSTEM_NAME, configData.get(ConfigConstant.SYSTEM_NAME));
         data.put(ConfigConstant.SYSTEM_LOGO, configData.get(ConfigConstant.SYSTEM_LOGO));
-        data.put(ConfigConstant.SYSTEM_PC_URL, configData.get(ConfigConstant.SYSTEM_PC_URL));
 
         Integer rid = -1;
         String avatar = configData.get(ConfigConstant.MEMBER_DEFAULT_AVATAR);

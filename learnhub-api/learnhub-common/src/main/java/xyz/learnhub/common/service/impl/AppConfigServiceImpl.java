@@ -32,11 +32,19 @@ public class AppConfigServiceImpl extends ServiceImpl<AppConfigMapper, AppConfig
 
     @Override
     public List<AppConfig> allShow() {
-        return list(query().getWrapper().eq("is_hidden", 0));
+        return list(
+                query().getWrapper()
+                        .eq("is_hidden", 0)
+                        .notIn("key_name", ConfigConstant.REMOVED_CONFIG_KEYS));
     }
 
     @Override
     public void saveFromMap(HashMap<String, String> data) {
+        data.keySet().removeIf(ConfigConstant.REMOVED_CONFIG_KEYS::contains);
+        if (data.isEmpty()) {
+            return;
+        }
+
         Map<String, AppConfig> configs =
                 list(query().getWrapper().in("key_name", data.keySet())).stream()
                         .collect(Collectors.toMap(AppConfig::getKeyName, e -> e));
@@ -73,7 +81,11 @@ public class AppConfigServiceImpl extends ServiceImpl<AppConfigMapper, AppConfig
 
     @Override
     public Map<String, String> keyValues() {
-        return list(query().getWrapper().eq("is_hidden", 0)).stream()
+        return list(
+                        query().getWrapper()
+                                .eq("is_hidden", 0)
+                                .notIn("key_name", ConfigConstant.REMOVED_CONFIG_KEYS))
+                .stream()
                 .collect(Collectors.toMap(AppConfig::getKeyName, AppConfig::getKeyValue));
     }
 
@@ -100,6 +112,7 @@ public class AppConfigServiceImpl extends ServiceImpl<AppConfigMapper, AppConfig
         return list(
                         query().getWrapper()
                                 .eq("field_type", BackendConstant.APP_CONFIG_FIELD_TYPE_IMAGE)
+                                .notIn("key_name", ConfigConstant.REMOVED_CONFIG_KEYS)
                                 .isNotNull("key_value"))
                 .stream()
                 .filter(appConfig -> !appConfig.getKeyValue().isEmpty())

@@ -1,9 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 type SystemConfigStoreInterface = {
-  systemPcUrl?: string;
   systemLogo?: string;
-  systemName?: string;
   memberDefaultAvatar?: string;
   courseDefaultThumbs?: string[];
   departments?: any;

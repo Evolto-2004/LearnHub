@@ -24,9 +24,7 @@ const InitPage = (props: Props) => {
 
   const saveConfig = (configData: any) => {
     let config: SystemConfigStoreInterface = {
-      systemName: configData["system.name"],
       systemLogo: configData["system.logo"],
-      systemPcUrl: configData["system.pc_url"],
       resourceUrl: configData["resource_url"],
       memberDefaultAvatar: configData["member.default_avatar"],
       courseDefaultThumbs: configData["default.course_thumbs"],

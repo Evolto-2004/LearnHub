@@ -25,16 +25,9 @@ public class SystemController {
 
         HashMap<String, Object> data = new HashMap<>();
 
-        data.put("system-name", configs.get(ConfigConstant.SYSTEM_NAME));
         data.put("system-logo", configs.get(ConfigConstant.SYSTEM_LOGO));
-        data.put("system-pc-url", configs.get(ConfigConstant.SYSTEM_PC_URL));
-        data.put("system-pc-index-footer-msg", configs.get("system.pc_index_footer_msg"));
 
         data.put("player-poster", configs.get("player.poster"));
-        data.put("player-is-enabled-bullet-secret", configs.get("player.is_enabled_bullet_secret"));
-        data.put("player-bullet-secret-text", configs.get("player.bullet_secret_text"));
-        data.put("player-bullet-secret-color", configs.get("player.bullet_secret_color"));
-        data.put("player-bullet-secret-opacity", configs.get("player.bullet_secret_opacity"));
         data.put("player-disabled-drag", configs.get("player.disabled_drag"));
 
         // 获取签名url

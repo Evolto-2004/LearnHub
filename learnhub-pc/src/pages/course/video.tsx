@@ -14,7 +14,6 @@ const CoursePalyPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const systemConfig = useSelector((state: any) => state.systemConfig.value);
-  const user = useSelector((state: any) => state.loginUser.value.user);
   const [playUrl, setPlayUrl] = useState("");
   const [playDuration, setPlayDuration] = useState(0);
   const [playendedStatus, setPlayendedStatus] = useState(false);
@@ -153,16 +152,6 @@ const CoursePalyPage = () => {
         pic: systemConfig.playerPoster,
       },
       try: isTrySee === 1,
-      bulletSecret: {
-        enabled: systemConfig.playerIsEnabledBulletSecret,
-        text: systemConfig.playerBulletSecretText
-          .replace("{name}", user.name)
-          .replace("{email}", user.email)
-          .replace("{idCard}", user.id_card),
-        size: "14px",
-        color: systemConfig.playerBulletSecretColor || "red",
-        opacity: Number(systemConfig.playerBulletSecretOpacity),
-      },
       ban_drag: banDrag,
       last_see_pos: lastSeeParams,
     });

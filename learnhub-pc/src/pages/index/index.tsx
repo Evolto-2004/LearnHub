@@ -34,7 +34,6 @@ type LearnCourseRecordsModel = {
 const IndexPage = () => {
   const navigate = useNavigate();
   const result = new URLSearchParams(useLocation().search);
-  const systemConfig = useSelector((state: any) => state.systemConfig.value);
   const [loading, setLoading] = useState<boolean>(false);
   const [tabKey, setTabKey] = useState(Number(result.get("tab") || 0));
   const [coursesList, setCoursesList] = useState<CourseModel[]>([]);
@@ -53,10 +52,6 @@ const IndexPage = () => {
     }
     getData();
   }, [tabKey, currentDepId]);
-
-  useEffect(() => {
-    document.title = systemConfig.systemName || "Home";
-  }, [systemConfig]);
 
   const getData = () => {
     setLoading(true);
