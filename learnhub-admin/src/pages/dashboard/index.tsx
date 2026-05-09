@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import styles from "./index.module.less";
-import { Row, Col } from "antd";
 import { useNavigate } from "react-router-dom";
 import iconN1 from "../../assets/images/dashboard/icon-n1.png";
 import iconN2 from "../../assets/images/dashboard/icon-n2.png";
@@ -68,8 +67,8 @@ const DashboardPage = () => {
 
   return (
     <>
-      <Row gutter={24}>
-        <Col span={12}>
+      <div className={styles["dashboard-layout"]}>
+        <div className={styles["summary-card"]}>
           <div className="learnhub-main-top">
             <div className={styles["stats-grid"]}>
               <div className={styles["label-item"]}>
@@ -109,7 +108,31 @@ const DashboardPage = () => {
               </div>
             </div>
           </div>
-          <div className="learnhub-main-top mt-24">
+        </div>
+        <div className={styles["summary-card"]}>
+          <div className="learnhub-main-top">
+            <div className={styles["stats-grid"]}>
+              <div className={styles["label-item"]}>
+                <div className={styles["label"]}>Departments</div>
+                <div className={styles["info"]}>
+                  <div className={styles["num"]}>
+                    {basicData?.department_total}
+                  </div>
+                </div>
+              </div>
+              <div className={styles["label-item"]}>
+                <div className={styles["label"]}>Admins</div>
+                <div className={styles["info"]}>
+                  <div className={styles["num"]}>
+                    {basicData?.admin_user_total}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={styles["full-card"]}>
+          <div className="learnhub-main-top">
             <div className={styles["large-title"]}>Quick Actions</div>
             <div className={styles["mode-box"]}>
               <div
@@ -162,7 +185,9 @@ const DashboardPage = () => {
               </div>
             </div>
           </div>
-          <div className="learnhub-main-top mt-24" style={{ minHeight: 376 }}>
+        </div>
+        <div className={styles["full-card"]}>
+          <div className="learnhub-main-top" style={{ minHeight: 376 }}>
             <div className={styles["large-title"]}>Top Learners Today</div>
             <div className={styles["rank-list"]}>
               {basicData?.user_learn_top10 && (
@@ -407,31 +432,9 @@ const DashboardPage = () => {
               )}
             </div>
           </div>
-        </Col>
-        <Col span={12}>
-          <div className="learnhub-main-top">
-            <div className={styles["stats-grid"]}>
-              <div className={styles["label-item"]}>
-                <div className={styles["label"]}>Departments</div>
-                <div className={styles["info"]}>
-                  <div className={styles["num"]}>
-                    {basicData?.department_total}
-                  </div>
-                </div>
-              </div>
-              <div className={styles["label-item"]}>
-                <div className={styles["label"]}>Admins</div>
-                <div className={styles["info"]}>
-                  <div className={styles["num"]}>
-                    {basicData?.admin_user_total}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Col>
-        <Footer></Footer>
-      </Row>
+        </div>
+      </div>
+      <Footer></Footer>
     </>
   );
 };
