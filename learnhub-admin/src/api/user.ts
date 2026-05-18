@@ -70,15 +70,6 @@ export function destroyUser(id: number) {
   return client.destroy(`/backend/v1/user/${id}`);
 }
 
-//startlineYes表格真Yes数据的起始行号-用于提示哪一行数据存在问题
-//usersYes一个二维字符串数组，每个数组的元素如下：[Departmentids字符串,Email,昵称,Password,Name,身份证]
-export function storeBatch(startLine: number, users: string[][]) {
-  return client.post("/backend/v1/user/store-batch", {
-    start_line: startLine,
-    users: users,
-  });
-}
-
 export function learnStats(id: number) {
   return client.get(`/backend/v1/user/${id}/learn-stats`, {});
 }

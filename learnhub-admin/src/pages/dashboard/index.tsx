@@ -150,14 +150,14 @@ const DashboardPage = () => {
               <div
                 className={styles["link-mode"]}
                 onClick={() => {
-                  navigate("/videos");
+                  navigate("/department");
                 }}
               >
                 <i
-                  className="iconfont icon-upvideo"
-                  style={{ color: "#0EA5E9", fontSize: 36 }}
+                  className="iconfont icon-department"
+                  style={{ color: "#16A34A", fontSize: 36 }}
                 ></i>
-                <span>Upload Video</span>
+                <span>Create Department</span>
               </div>
               <div
                 className={styles["link-mode"]}
@@ -174,14 +174,38 @@ const DashboardPage = () => {
               <div
                 className={styles["link-mode"]}
                 onClick={() => {
-                  navigate("/department");
+                  navigate("/videos");
                 }}
               >
                 <i
-                  className="iconfont icon-department"
-                  style={{ color: "#16A34A", fontSize: 36 }}
+                  className="iconfont icon-upvideo"
+                  style={{ color: "#0EA5E9", fontSize: 36 }}
                 ></i>
-                <span>Create Department</span>
+                <span>Upload Video</span>
+              </div>
+              <div
+                className={styles["link-mode"]}
+                onClick={() => {
+                  navigate("/images");
+                }}
+              >
+                <i
+                  className="iconfont icon-photo"
+                  style={{ color: "#10B981", fontSize: 36 }}
+                ></i>
+                <span>Upload Image</span>
+              </div>
+              <div
+                className={styles["link-mode"]}
+                onClick={() => {
+                  navigate("/courseware");
+                }}
+              >
+                <i
+                  className="iconfont icon-icon-file"
+                  style={{ color: "#F59E0B", fontSize: 36 }}
+                ></i>
+                <span>Courseware</span>
               </div>
             </div>
           </div>

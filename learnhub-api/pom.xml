@@ -14,7 +14,6 @@
     <version>1.0</version>
     <packaging>pom</packaging>
     <name>LearnHub</name>
-    <description>开源企业内部培训解决方案</description>
 
     <modules>
         <module>learnhub-api</module>

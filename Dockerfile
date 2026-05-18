@@ -19,18 +19,21 @@ WORKDIR /app
 
 RUN /app/mvnw -Dmaven.test.skip=true clean package
 
-FROM eclipse-temurin:17-jre-jammy AS base
+FROM eclipse-temurin:17-jre-jammy AS jre
 
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends nginx \
-  && rm -rf /var/lib/apt/lists/*
+FROM nginx:1.27 AS base
+
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+COPY --from=jre /opt/java/openjdk /opt/java/openjdk
 
 COPY --from=java-builder /app/learnhub-api/target/learnhub-api.jar /app/api/app.jar
 
 COPY --from=node-builder /app/admin/dist /app/admin
 COPY --from=node-builder /app/pc/dist /app/pc
 
-COPY docker/nginx/conf/nginx.conf /etc/nginx/sites-enabled/default
+COPY docker/nginx/conf/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 9898
 EXPOSE 9800

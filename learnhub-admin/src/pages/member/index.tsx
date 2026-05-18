@@ -366,18 +366,6 @@ const MemberPage = () => {
                 onClick={() => setCreateVisible(true)}
                 disabled={null}
               />
-              {dep_ids.length === 0 && (
-                <Link style={{ textDecoration: "none" }} to={`/member/import`}>
-                  <PerButton
-                    type="default"
-                    text="Import Learners"
-                    class="mr-16"
-                    icon={null}
-                    p="user-store"
-                    disabled={null}
-                  />
-                </Link>
-              )}
               {/* {dep_ids.length > 0 && (
                 <Link
                   style={{ textDecoration: "none" }}

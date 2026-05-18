@@ -41,6 +41,8 @@ export const SelectResource = (props: PropsInterface) => {
           open={true}
           width={800}
           maskClosable={false}
+          okText="Confirm"
+          cancelText="Cancel"
           onOk={() => {
             props.onSelected(selectKeys, selectVideos);
             setSelectKeys([]);

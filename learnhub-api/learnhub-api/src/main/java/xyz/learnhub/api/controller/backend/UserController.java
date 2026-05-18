@@ -15,23 +15,19 @@ import org.springframework.web.bind.annotation.*;
 import xyz.learnhub.api.event.UserCourseHourRecordDestroyEvent;
 import xyz.learnhub.api.event.UserCourseRecordDestroyEvent;
 import xyz.learnhub.api.event.UserDestroyEvent;
-import xyz.learnhub.api.request.backend.UserImportRequest;
 import xyz.learnhub.api.request.backend.UserRequest;
 import xyz.learnhub.common.annotation.BackendPermission;
 import xyz.learnhub.common.annotation.Log;
 import xyz.learnhub.common.constant.*;
-import xyz.learnhub.common.context.BCtx;
 import xyz.learnhub.common.domain.*;
 import xyz.learnhub.common.exception.NotFoundException;
 import xyz.learnhub.common.service.*;
-import xyz.learnhub.common.service.UserDepartmentService;
 import xyz.learnhub.common.types.JsonResponse;
 import xyz.learnhub.common.types.mapper.UserCourseHourRecordCourseCountMapper;
 import xyz.learnhub.common.types.paginate.PaginationResult;
 import xyz.learnhub.common.types.paginate.UserCourseHourRecordPaginateFilter;
 import xyz.learnhub.common.types.paginate.UserCourseRecordPaginateFilter;
 import xyz.learnhub.common.types.paginate.UserPaginateFilter;
-import xyz.learnhub.common.util.HelperUtil;
 import xyz.learnhub.common.util.StringUtil;
 import xyz.learnhub.course.domain.*;
 import xyz.learnhub.course.service.*;
@@ -47,8 +43,6 @@ import xyz.learnhub.resource.service.ResourceService;
 public class UserController {
 
     @Autowired private UserService userService;
-
-    @Autowired private UserDepartmentService userDepartmentService;
 
     @Autowired private DepartmentService departmentService;
 
@@ -243,174 +237,6 @@ public class UserController {
         User user = userService.findOrFail(id);
         userService.removeById(user.getId());
         context.publishEvent(new UserDestroyEvent(this, user.getId()));
-        return JsonResponse.success();
-    }
-
-    @PostMapping("/store-batch")
-    @Transactional
-    @Log(title = "学员-批量导入", businessType = BusinessTypeConstant.INSERT)
-    public JsonResponse batchStore(@RequestBody @Validated UserImportRequest req) {
-        List<UserImportRequest.UserItem> users = req.getUsers();
-        if (users.isEmpty()) {
-            return JsonResponse.error("数据为空");
-        }
-        if (users.size() > 1000) {
-            return JsonResponse.error("一次最多导入1000条数据");
-        }
-
-        // 导入表格的有效数据起始行-用于错误提醒
-        Integer startLine = req.getStartLine();
-
-        // 默认的学员头像
-        int defaultAvatar = CommonConstant.MINUS_ONE;
-        String defaultAvatarConfig = BCtx.getConfig().get(ConfigConstant.MEMBER_DEFAULT_AVATAR);
-        if (StringUtil.isNotEmpty(defaultAvatarConfig)) {
-            defaultAvatar = Integer.parseInt(defaultAvatarConfig);
-        }
-
-        List<String[]> errorLines = new ArrayList<>();
-        errorLines.add(new String[] {"错误行", "错误信息"}); // 错误表-表头
-
-        // 读取存在的部门
-        List<Department> departments = departmentService.all();
-        Map<Integer, String> depId2Name =
-                departments.stream()
-                        .collect(Collectors.toMap(Department::getId, Department::getName));
-        HashMap<String, Integer> depChainNameMap = new HashMap<>();
-        for (Department tmpDepItem : departments) {
-            // 一级部门
-            if (tmpDepItem.getParentChain() == null || tmpDepItem.getParentChain().isEmpty()) {
-                depChainNameMap.put(tmpDepItem.getName(), tmpDepItem.getId());
-                continue;
-            }
-
-            // 多级部门
-            String[] tmpChainIds = tmpDepItem.getParentChain().split(",");
-            List<String> tmpChainNames = new ArrayList<>();
-            for (int i = 0; i < tmpChainIds.length; i++) {
-                String tmpName = depId2Name.get(Integer.valueOf(tmpChainIds[i]));
-                if (tmpName == null) {
-                    continue;
-                }
-                tmpChainNames.add(tmpName);
-            }
-            tmpChainNames.add(tmpDepItem.getName());
-            depChainNameMap.put(String.join("-", tmpChainNames), tmpDepItem.getId());
-        }
-
-        // 邮箱输入重复检测 || 部门存在检测
-        HashMap<String, Integer> emailRepeat = new HashMap<>();
-        HashMap<String, Integer[]> depMap = new HashMap<>();
-        List<String> emails = new ArrayList<>();
-        List<User> insertUsers = new ArrayList<>();
-        int i = -1;
-
-        for (UserImportRequest.UserItem userItem : users) {
-            i++; // 索引值
-
-            if (userItem.getEmail() == null || userItem.getEmail().trim().isEmpty()) {
-                errorLines.add(new String[] {"第" + (i + startLine) + "行", "未输入邮箱账号"});
-            } else {
-                // 邮箱重复判断
-                Integer repeatLine = emailRepeat.get(userItem.getEmail());
-                if (repeatLine != null) {
-                    errorLines.add(
-                            new String[] {
-                                "第" + (i + startLine) + "行", "与第" + repeatLine + "行邮箱重复"
-                            });
-                } else {
-                    emailRepeat.put(userItem.getEmail(), i + startLine);
-                }
-                emails.add(userItem.getEmail());
-            }
-
-            // 部门数据检测
-            if (userItem.getDeps() == null || userItem.getDeps().trim().isEmpty()) {
-                errorLines.add(new String[] {"第" + (i + startLine) + "行", "未选择部门"});
-            } else {
-                String[] tmpDepList = userItem.getDeps().trim().split("\\|");
-                Integer[] tmpDepIds = new Integer[tmpDepList.length];
-                for (int j = 0; j < tmpDepList.length; j++) {
-                    // 获取部门id
-                    Integer tmpDepId = depChainNameMap.get(tmpDepList[j]);
-                    // 判断部门id是否存在
-                    if (tmpDepId == null || tmpDepId == 0) {
-                        errorLines.add(
-                                new String[] {
-                                    "第" + (i + startLine) + "行", "部门『" + tmpDepList[j] + "』不存在"
-                                });
-                        continue;
-                    }
-                    tmpDepIds[j] = tmpDepId;
-                }
-                depMap.put(userItem.getEmail(), tmpDepIds);
-            }
-
-            // 姓名为空检测
-            String tmpName = userItem.getName();
-            if (tmpName == null || tmpName.trim().isEmpty()) {
-                errorLines.add(new String[] {"第" + (i + startLine) + "行", "昵称为空"});
-            }
-
-            // 密码为空检测
-            String tmpPassword = userItem.getPassword();
-            if (tmpPassword == null || tmpPassword.trim().isEmpty()) {
-                errorLines.add(new String[] {"第" + (i + startLine) + "行", "密码为空"});
-            }
-
-            // 待插入数据
-            User tmpInsertUser = new User();
-            String tmpSalt = HelperUtil.randomString(6);
-            tmpInsertUser.setEmail(userItem.getEmail());
-            tmpInsertUser.setPassword(HelperUtil.MD5(tmpPassword + tmpSalt));
-            tmpInsertUser.setSalt(tmpSalt);
-            tmpInsertUser.setName(tmpName);
-            tmpInsertUser.setAvatar(defaultAvatar);
-            tmpInsertUser.setIdCard(userItem.getIdCard());
-            tmpInsertUser.setCreateIp(SystemConstant.INTERNAL_IP);
-            tmpInsertUser.setCreateCity(SystemConstant.INTERNAL_IP_AREA);
-            tmpInsertUser.setCreatedAt(new Date());
-            tmpInsertUser.setUpdatedAt(new Date());
-
-            insertUsers.add(tmpInsertUser);
-        }
-
-        if (errorLines.size() > 1) {
-            return JsonResponse.error("导入数据有误", errorLines);
-        }
-
-        // 邮箱是否注册检测
-        List<String> existsEmails = userService.existsEmailsByEmails(emails);
-        if (!existsEmails.isEmpty()) {
-            for (String tmpEmail : existsEmails) {
-                errorLines.add(new String[] {"第" + emailRepeat.get(tmpEmail) + "行", "邮箱已注册"});
-            }
-        }
-        if (errorLines.size() > 1) {
-            return JsonResponse.error("导入数据有误", errorLines);
-        }
-
-        userService.saveBatch(insertUsers);
-
-        // 部门关联
-        List<UserDepartment> insertUserDepartments = new ArrayList<>();
-        for (User tmpUser : insertUsers) {
-            Integer[] tmpDepIds = depMap.get(tmpUser.getEmail());
-            if (tmpDepIds == null) {
-                continue;
-            }
-            for (Integer tmpDepId : tmpDepIds) {
-                insertUserDepartments.add(
-                        new UserDepartment() {
-                            {
-                                setUserId(tmpUser.getId());
-                                setDepId(tmpDepId);
-                            }
-                        });
-            }
-        }
-        userDepartmentService.saveBatch(insertUserDepartments);
-
         return JsonResponse.success();
     }
 

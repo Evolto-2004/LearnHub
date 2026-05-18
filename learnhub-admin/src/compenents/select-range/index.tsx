@@ -44,6 +44,7 @@ export const SelectRange = (props: PropsInterface) => {
             props.onCancel();
           }}
           okText="Confirm"
+          cancelText="Cancel"
           open={true}
           width={800}
           maskClosable={false}

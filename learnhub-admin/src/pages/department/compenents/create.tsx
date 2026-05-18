@@ -1,6 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Form, Input, Cascader, message, Spin } from "antd";
-import styles from "./create.module.less";
 import { department } from "../../../api/index";
 
 interface PropInterface {
@@ -120,7 +119,7 @@ export const DepartmentCreate: React.FC<PropInterface> = ({
           centered
           forceRender
           open={true}
-          width={416}
+          width={520}
           onOk={() => form.submit()}
           onCancel={() => onCancel()}
           maskClosable={false}
@@ -138,8 +137,9 @@ export const DepartmentCreate: React.FC<PropInterface> = ({
             <Form
               form={form}
               name="basic"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
+              labelCol={{ flex: "150px" }}
+              wrapperCol={{ flex: "1 1 0" }}
+              labelAlign="right"
               initialValues={{ remember: true }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
@@ -151,7 +151,7 @@ export const DepartmentCreate: React.FC<PropInterface> = ({
                 rules={[{ required: true, message: "Please select a parent item!" }]}
               >
                 <Cascader
-                  style={{ width: 200 }}
+                  style={{ width: "100%" }}
                   allowClear
                   placeholder="Select a parent item"
                   onChange={handleChange}
@@ -167,7 +167,7 @@ export const DepartmentCreate: React.FC<PropInterface> = ({
                 rules={[{ required: true, message: "Please enter the department name!" }]}
               >
                 <Input
-                  style={{ width: 200 }}
+                  style={{ width: "100%" }}
                   allowClear
                   placeholder="Please enter the department name"
                 />

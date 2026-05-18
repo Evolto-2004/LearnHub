@@ -232,7 +232,7 @@ export const CourseUpdate: React.FC<PropInterface> = ({
               </Button>
             </Space>
           }
-          width={634}
+          width={760}
         >
           {init && (
             <div className="float-left text-center mt-30">
@@ -260,8 +260,8 @@ export const CourseUpdate: React.FC<PropInterface> = ({
             <Form
               form={form}
               name="update-basic"
-              labelCol={{ span: 5 }}
-              wrapperCol={{ span: 19 }}
+              labelCol={{ flex: "190px" }}
+              wrapperCol={{ flex: "1 1 0" }}
               initialValues={{ remember: true }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
