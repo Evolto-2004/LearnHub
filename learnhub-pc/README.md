@@ -1,8 +1,8 @@
 # LearnHub PC
 
-LearnHub PC 学生端前端工程。
+LearnHub PC student frontend project.
 
-## 本地开发
+## Local Development
 
 ```bash
 pnpm install

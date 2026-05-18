@@ -35,8 +35,11 @@
       display: flex;
       align-items: center;
       .type {
-        width: 52px;
+        width: fit-content;
+        min-width: 72px;
         height: 24px;
+        box-sizing: border-box;
+        padding: 0 10px;
         background: #eff6ff;
         border: 1px solid #bfdbfe;
         border-radius: 6px;
@@ -49,8 +52,11 @@
         justify-content: center;
       }
       .active-type {
-        width: 52px;
+        width: fit-content;
+        min-width: 72px;
         height: 24px;
+        box-sizing: border-box;
+        padding: 0 10px;
         background: rgba(217, 119, 6, 0.12);
         border: 1px solid rgba(217, 119, 6, 0.2);
         border-radius: 6px;

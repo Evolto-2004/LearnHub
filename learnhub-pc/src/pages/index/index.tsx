@@ -145,17 +145,16 @@ const IndexPage = () => {
             >
               <div className={styles["info-item"]}>
                 <span>Required: Completed courses</span>
-                <strong> {stats?.required_finished_course_count || 0} </strong>
-                <span>/ {stats?.required_course_count || 0}</span>
+                <strong>{stats?.required_finished_course_count || 0}</strong>
+                <span>/</span>
+                <span>{stats?.required_course_count || 0}</span>
               </div>
               {stats && stats.nun_required_course_count > 0 && (
                 <div className={styles["info-item"]}>
                   <span>Optional: Completed courses</span>
-                  <strong>
-                    {" "}
-                    {stats?.nun_required_finished_course_count || 0}{" "}
-                  </strong>
-                  <span>/ {stats?.nun_required_course_count || 0}</span>
+                  <strong>{stats?.nun_required_finished_course_count || 0}</strong>
+                  <span>/</span>
+                  <span>{stats?.nun_required_course_count || 0}</span>
                 </div>
               )}
             </div>
@@ -163,10 +162,12 @@ const IndexPage = () => {
           <div className={styles["top-item"]}>
             <div className={styles["title"]}>
               <img className={styles["icon"]} src={studyTime} />
-              <span>StudyDuration</span>
+              <span>Study Duration</span>
             </div>
             {stats ? (
-              <div className={styles["info"]}>
+              <div
+                className={`${styles["info"]} ${styles["study-duration-info"]}`}
+              >
                 <div className={styles["info-item"]}>
                   Today：
                   {studyTimeFormat(stats.today_learn_duration)[0] !== 0 && (

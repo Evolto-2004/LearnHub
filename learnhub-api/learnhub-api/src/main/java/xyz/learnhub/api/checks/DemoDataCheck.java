@@ -18,6 +18,7 @@ import xyz.learnhub.common.exception.NotFoundException;
 import xyz.learnhub.common.service.AdminUserService;
 import xyz.learnhub.common.service.DepartmentService;
 import xyz.learnhub.common.service.UserService;
+import xyz.learnhub.common.util.HelperUtil;
 import xyz.learnhub.course.domain.Course;
 import xyz.learnhub.course.domain.CourseAttachment;
 import xyz.learnhub.course.domain.CourseChapter;
@@ -47,7 +48,7 @@ import java.util.List;
 public class DemoDataCheck implements CommandLineRunner {
 
     private static final String DEFAULT_ADMIN_EMAIL = "admin@learnhub.local";
-    private static final String DEMO_PASSWORD = "learnhub";
+    private static final String DEMO_PASSWORD = "123456";
 
     @Autowired private AdminUserService adminUserService;
 
@@ -604,10 +605,12 @@ public class DemoDataCheck implements CommandLineRunner {
         }
 
         User updateUser = new User();
+        String salt = user.getSalt() == null ? "" : user.getSalt();
         updateUser.setId(user.getId());
         updateUser.setEmail(demoUser.email());
         updateUser.setName(demoUser.name());
         updateUser.setAvatar(0);
+        updateUser.setPassword(HelperUtil.MD5(DEMO_PASSWORD + salt));
         updateUser.setCredit1(demoUser.credit());
         updateUser.setIsActive(1);
         updateUser.setIsLock(0);

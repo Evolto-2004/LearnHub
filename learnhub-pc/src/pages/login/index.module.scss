@@ -57,15 +57,9 @@
         height: 100%;
         box-sizing: border-box;
         border-left: 1px solid #d8d8d8;
-        padding: 50px 60px;
+        padding: 56px 60px 36px;
         display: flex;
         flex-direction: column;
-        .desc {
-          font-size: 14px;
-          line-height: 24px;
-          color: #475569;
-          margin-bottom: 24px;
-        }
         .captcha-box {
           width: 125px;
           height: 54px;

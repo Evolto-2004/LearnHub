@@ -4,13 +4,12 @@
     "lib": ["ESNext"],
     "composite": true,
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-    "baseUrl": ".",
     "paths": {
-      "rollup": ["node_modules/.pnpm/rollup@3.29.4/node_modules/rollup/dist/rollup.d.ts"]
+      "rollup": ["./node_modules/.pnpm/rollup@3.29.4/node_modules/rollup/dist/rollup.d.ts"]
     }
   },
   "include": ["vite.config.ts"]

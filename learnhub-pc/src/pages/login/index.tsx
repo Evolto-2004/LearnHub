@@ -73,9 +73,6 @@ const LoginPage: React.FC = () => {
             <img className={styles["icon"]} src={banner} alt="" />
           </div>
           <div className={styles["right-box"]}>
-            <div className={styles["desc"]}>
-              Access courses, progress, and your profile in one place.
-            </div>
             <div className="login-box d-flex">
               <Input
                 value={email}

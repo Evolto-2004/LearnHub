@@ -90,7 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setSalt(salt);
         user.setIdCard(idCard);
         user.setCredit1(0);
-        user.setIsSetPassword(0);
+        user.setIsSetPassword(1);
         user.setIsActive(1);
         user.setIsLock(0);
         user.setCreateIp(SystemConstant.INTERNAL_IP);
@@ -127,6 +127,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         if (password != null && !password.isEmpty()) {
             newUser.setPassword(HelperUtil.MD5(password + user.getSalt()));
+            newUser.setIsSetPassword(1);
         }
 
         if (newUser.getName() != null
@@ -179,6 +180,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                     {
                         setId(user.getId());
                         setPassword(HelperUtil.MD5(newPassword + user.getSalt()));
+                        setIsSetPassword(1);
                     }
                 });
     }

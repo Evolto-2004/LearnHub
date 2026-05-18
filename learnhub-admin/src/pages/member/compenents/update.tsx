@@ -146,7 +146,7 @@ export const MemberUpdate: React.FC<PropInterface> = ({
     <>
       {open ? (
         <Modal
-          title="EditLearner"
+          title="Edit Learner"
           centered
           forceRender
           open={true}

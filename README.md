@@ -1,45 +1,45 @@
 # LearnHub
 
-LearnHub 是一个基于 `Java + MySQL + React` 的学习平台，提供后台管理、PC 学生端和统一 API 服务。
+LearnHub is a learning platform based on `Java + MySQL + React`, providing an admin dashboard, a PC student frontend, and a unified API service.
 
-## 快速启动
+## Quick Start
 
 ```bash
 cp .env.example .env
 docker compose up -d --build
 ```
 
-首次使用全新数据库启动时，系统会自动写入本地 MinIO 的 S3 开发配置，默认可直接上传视频和其他资源，无需再到后台手动配置 S3。
+When starting with a fresh database for the first time, the system automatically writes the local MinIO S3 development configuration. By default, videos and other resources can be uploaded directly without manually configuring S3 in the admin dashboard.
 
-默认本地 S3 / MinIO 配置：
+Default local S3 / MinIO configuration:
 
-- AccessKey：`learnhub`
-- SecretKey：`learnhub123456`
-- Bucket：`learnhub`
-- Region：`us-east-1`
-- Endpoint：`http://minio.localhost:9000`
+- AccessKey: `learnhub`
+- SecretKey: `learnhub123456`
+- Bucket: `learnhub`
+- Region: `us-east-1`
+- Endpoint: `http://minio.localhost:9000`
 
-如果之前已经启动过项目，数据库里可能已经存在旧的空 S3 配置项，初始化逻辑不会覆盖已有配置。此时可以在后台系统配置中手动填入上面的值，或执行 `docker compose down -v` 清空旧数据卷后重新启动。
+If the project has been started before, the database may already contain older empty S3 configuration entries, and the initialization logic will not overwrite existing configuration. In that case, manually enter the values above in the admin system configuration, or run `docker compose down -v` to clear the old data volumes and start again.
 
-## 如果不想显示示例数据
+## Disable Demo Data
 
 ```bash
 LEARNHUB_DEMO_DATA_ENABLED=false docker compose up -d --build
 ```
 
-启动后可访问：
+After startup, visit:
 
-- 管理后台：`http://localhost:9900`
-- PC 学生端：`http://localhost:9800`
-- API：`http://localhost:9700`
+- Admin dashboard: `http://localhost:9900`
+- PC student frontend: `http://localhost:9800`
+- API: `http://localhost:9700`
 
-默认管理员账号：
+Default admin account:
 
-- 邮箱：`admin@learnhub.local`
-- 密码：`learnhub`
+- Email: `admin@learnhub.local`
+- Password: `learnhub`
 
-## 项目结构
+## Project Structure
 
-- `learnhub-admin`：管理后台
-- `learnhub-pc`：PC 学生端
-- `learnhub-api`：后端服务
+- `learnhub-admin`: Admin dashboard
+- `learnhub-pc`: PC student frontend
+- `learnhub-api`: Backend service

@@ -87,10 +87,7 @@ const LoginPage = () => {
         <div className={styles["right-box"]}>
           <div className={styles["eyebrow"]}>LEARNHUB CONSOLE</div>
           <div className={styles["title"]}>Admin Sign In</div>
-          <div className={styles["desc"]}>
-            A blue enterprise learning hub for managing courses, learners, and resources.
-          </div>
-          <div className="login-box d-flex mt-50">
+          <div className={`login-box d-flex ${styles["form-row"]}`}>
             <Input
               value={email}
               onChange={(e) => {
@@ -102,7 +99,7 @@ const LoginPage = () => {
               onKeyUp={(e) => keyUp(e)}
             />
           </div>
-          <div className="login-box d-flex mt-50">
+          <div className={`login-box d-flex ${styles["form-row"]}`}>
             <Input.Password
               value={password}
               onChange={(e) => {
@@ -114,7 +111,7 @@ const LoginPage = () => {
               onKeyUp={(e) => keyUp(e)}
             />
           </div>
-          <div className="login-box d-flex mt-50">
+          <div className={`login-box d-flex ${styles["form-row"]} ${styles["button-row"]}`}>
             <Button
               style={{ width: 400, height: 54 }}
               type="primary"

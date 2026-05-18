@@ -260,6 +260,15 @@ body {
       color: rgba(0, 0, 0, 0.45);
     }
   }
+
+  .ant-input-password {
+    .ant-input {
+      background-color: transparent;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+  }
 }
 
 .c-admin {

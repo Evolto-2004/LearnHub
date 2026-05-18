@@ -19,14 +19,12 @@ WORKDIR /app
 
 RUN /app/mvnw -Dmaven.test.skip=true clean package
 
-FROM eclipse-temurin:17-jre-jammy AS jre
-
 FROM nginx:1.27 AS base
 
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
-COPY --from=jre /opt/java/openjdk /opt/java/openjdk
+COPY --from=java-builder /opt/java/openjdk /opt/java/openjdk
 
 COPY --from=java-builder /app/learnhub-api/target/learnhub-api.jar /app/api/app.jar
 

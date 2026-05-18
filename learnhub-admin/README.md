@@ -1,12 +1,12 @@
 # LearnHub Admin
 
-LearnHub 管理后台前端工程。
+LearnHub admin dashboard frontend project.
 
-## 本地开发
+## Local Development
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-默认通过 Vite 启动，接口地址请按本地环境配置。
+It starts with Vite by default. Configure the API endpoint for your local environment.
